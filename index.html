@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fixed Prosthodontics Quiz Hub | Dr. Zead</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #0c1427;
+      }
+      .typewriter h1::after {
+        content: '|';
+        animation: blink 1s step-end infinite;
+      }
+      @keyframes blink {
+        from, to {
+          color: transparent;
+        }
+        50% {
+          color: #3b82f6;
+        }
+      }
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+    </style>
+    <!-- React and ReactDOM UMD scripts -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- Babel Standalone for JSX compilation in the browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      // Constants
+      const QUIZZES = [
+        {
+          icon: '🦷',
+          title: 'Fixed Prosthodontics – Quiz 1',
+          description: 'Basic concepts and principles of fixed prosthodontics.',
+          link: 'https://zead1254.github.io/Fixed-Prosthodontics-Quiz1/',
+        },
+        {
+          icon: '👑',
+          title: 'Full Metal Crown – Quiz 2',
+          description: 'Preparation and finishing of full metal crowns.',
+          link: 'https://zead1254.github.io/Full-Metal-Crown-Quiz-2/',
+        },
+        {
+          icon: '🧰',
+          title: 'Dental Instruments – Quiz 3',
+          description: 'Identify and match fixed prosthodontic instruments.',
+          link: 'https://zead1254.github.io/dental-instruments-quiz3/',
+        },
+        {
+          icon: '⚙️',
+          title: 'Biomechanical Principles of Tooth Preparation – Quiz 4',
+          description: 'Understand mechanical factors affecting crown retention.',
+          link: 'https://zead1254.github.io/Bio-Mechanical-Principles-of-Tooth-Preparation-Quiz4/',
+        },
+      ];
+
+      const QUOTES = [
+        "اطلبوا العلم من المهد إلى اللحد.", "وَقُل رَّبِّ زِدْنِي عِلْمًا.", "النجاح هو مجموع الجهود الصغيرة التي تتكرر يوماً بعد يوم.", "لا تؤجل عمل اليوم إلى الغد.", "العلم نور والجهل ظلام.", "من سلك طريقاً يلتمس فيه علماً، سهّل الله له به طريقاً إلى الجنة.", "المثابرة هي مفتاح النجاح.", "اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ.", "لا تتوقف عندما تتعب، توقف عندما تنتهي.", "الفرق بين المستحيل والممكن يكمن في عزيمة المرء.", "إِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ.", "كن أنت التغيير الذي تريد أن تراه في العالم.", "الرحلة الطويلة تبدأ بخطوة واحدة.", "العقل السليم في الجسم السليم.", "إِنَّمَا يَخْشَى اللَّهَ مِنْ عِبَادِهِ الْعُلَمَاءُ.", "الفشل هو فرصة للبدء من جديد بذكاء أكبر.", "لكي تنجح، يجب أن تكون رغبتك في النجاح أكبر من خوفك من الفشل.", "ليس هناك طريق مختصر لأي مكان يستحق الذهاب إليه.", "وَأَن لَّيْسَ لِلْإِنسَانِ إِلَّا مَا سَعَى.", "التعليم هو أقوى سلاح يمكنك استخدامه لتغيير العالم.", "إذا كنت تستطيع أن تحلم به، يمكنك تحقيقه.", "الاجتهاد في الصغر، راحة في الكبر.", "من جد وجد، ومن زرع حصد.", "لا تفقد الأمل، فأفضل الأشياء تأتي في الوقت المناسب.", "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا.", "لا يولد الإنسان عالماً، فالعلم بالتعلم.", "النجاح لا يأتي إليك، بل أنت تذهب إليه.", "كل إنجاز عظيم كان يعتبر في البداية مستحيلاً.", "الأمس هو تاريخ، والغد هو لغز، واليوم هو هدية.", "يَرْفَعِ اللَّهُ الَّذِينَ آمَنُوا مِنكُمْ وَالَّذِينَ أُوتُوا الْعِلْمَ دَرَجَاتٍ.", "لا تخف من الفشل، بل اخف من عدم المحاولة.", "التفاؤل هو الإيمان الذي يؤدي إلى الإنجاز.", "اعمل بجد في صمت، ودع النجاح يحدث الضجيج.", "قوة الإرادة هي المحرك الأساسي للنجاح.", "إذا لم تبنِ أحلامك، سيقوم شخص آخر بتوظيفك لبناء أحلامه.", "السر في التقدم هو البدء.", "العلم يرفع بيوتاً لا عماد لها، والجهل يهدم بيت العز والشرف.", "كل خبير كان في يوم من الأيام مبتدئاً.", "نصف العلم أخطر من الجهل.", "لا يوجد مصعد للنجاح، عليك أن تصعد السلالم."
+      ];
+
+      // --- Components ---
+
+      const DentalToolIcon = ({ className }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.998 15.998 0 011.622-3.385m5.043.025a2.25 2.25 0 01-2.244-2.4 3 3 0 00-1.128-5.78m-1.62.024a15.998 15.998 0 01-3.385 1.62m6.66 0a2.25 2.25 0 002.4-2.244 3 3 0 00-5.78-1.128 2.25 2.25 0 01-2.245-2.4 4.5 4.5 0 00-2.245 8.4 2.25 2.25 0 012.245 2.4m-1.62-.024a15.998 15.998 0 001.622 3.385m-5.043-.025a15.998 15.998 0 013.388-1.622" />
+        </svg>
+      );
+
+      const CrownIcon = ({ className }) => (
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l7.5-7.5 7.5 7.5m-15 6l7.5-7.5 7.5 7.5" />
+          </svg>
+      );
+
+      const ToothIconOutline = ({ className }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
+        </svg>
+      );
+
+      const icons = [
+        { Icon: DentalToolIcon, size: 'w-16 h-16', top: '10%', left: '15%', delay: '0s', duration: '8s' },
+        { Icon: CrownIcon, size: 'w-12 h-12', top: '20%', left: '80%', delay: '1s', duration: '6s' },
+        { Icon: ToothIconOutline, size: 'w-20 h-20', top: '60%', left: '5%', delay: '2s', duration: '10s' },
+        { Icon: DentalToolIcon, size: 'w-10 h-10', top: '80%', left: '30%', delay: '3s', duration: '7s' },
+        { Icon: CrownIcon, size: 'w-24 h-24', top: '75%', left: '90%', delay: '0.5s', duration: '12s' },
+        { Icon: ToothIconOutline, size: 'w-14 h-14', top: '40%', left: '50%', delay: '1.5s', duration: '5s' },
+      ];
+
+      const AnimatedBackground = () => {
+        return (
+          <div className="absolute inset-0 w-full h-full pointer-events-none">
+            {icons.map((item, index) => (
+              <div
+                key={index}
+                className="absolute animate-float"
+                style={{
+                  top: item.top,
+                  left: item.left,
+                  animationDelay: item.delay,
+                  animationDuration: item.duration,
+                }}
+              >
+                <item.Icon className={`${item.size} text-blue-500/10`} />
+              </div>
+            ))}
+          </div>
+        );
+      };
+
+      const HeaderToothIcon = () => (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="w-8 h-8 md:w-10 md:h-10 text-blue-400"
+        >
+          <path d="M12.75 12.75L9 15l-1.5-1.5-2.122 2.121c-.42.42-.782.91-1.088 1.458a20.25 20.25 0 0011.92 1.414 20.274 20.274 0 003.524-.43c.15-.04.29-.09.42-.145.42-.18.78-.44 1.08-.78l2.12-2.121-1.5-1.5-3.75-2.25z" />
+          <path d="M12 3c-5.06 0-9.25 4.08-9.25 9.13 0 2.44.98 4.78 2.68 6.55l1.41-1.41A7.63 7.63 0 015.75 12.13c0-4.14 3.46-7.5 7.7-7.5s7.7 3.36 7.7 7.5a7.63 7.63 0 01-1.6 4.7l1.4 1.41c1.7-1.77 2.68-4.1 2.68-6.55C21.25 7.08 17.06 3 12 3z" />
+        </svg>
+      );
+
+      const Header = () => {
+        return (
+          <header className="py-4 px-6 md:py-6 md:px-10">
+            <div className="container mx-auto flex items-center justify-center">
+              <div className="animate-[spin_8s_linear_infinite] mr-3">
+                  <HeaderToothIcon />
+              </div>
+              <h1 className="text-xl md:text-2xl font-semibold text-gray-200 tracking-wider">
+                Fixed Prosthodontics Quiz Hub <span className="hidden sm:inline">by Dr. Zead</span>
+              </h1>
+            </div>
+          </header>
+        );
+      };
+
+      const Footer = () => {
+        return (
+          <footer className="py-4 px-6 text-center">
+            <p className="text-sm text-gray-400">
+              © 2025 Dr. Zead |{' '}
+              <a 
+                href="https://zead1254.github.io/Dr_zead" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                Designer's Portfolio
+              </a>
+            </p>
+          </footer>
+        );
+      };
+
+      const QuizCard = ({ quiz }) => {
+        return (
+          <div className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20 hover:border-blue-400/50">
+            <div className="flex flex-col h-full">
+              <div className="flex items-center mb-4">
+                <span className="text-3xl mr-4">{quiz.icon}</span>
+                <h2 className="text-lg md:text-xl font-bold text-left text-gray-100 group-hover:text-white transition-colors">
+                  {quiz.title}
+                </h2>
+              </div>
+              <p className="flex-grow text-left text-gray-300 mb-6">{quiz.description}</p>
+              <a
+                href={quiz.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-auto inline-block bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-300 ease-in-out shadow-md hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500"
+              >
+                Start Quiz
+              </a>
+            </div>
+          </div>
+        );
+      };
+      
+      const MotivationalQuote = ({ quote }) => {
+        const { useState, useEffect } = React;
+        const [visible, setVisible] = useState(true);
+
+        useEffect(() => {
+          setVisible(false);
+          const timer = setTimeout(() => {
+            setVisible(true);
+          }, 300);
+
+          return () => clearTimeout(timer);
+        }, [quote]);
+
+        return (
+          <div className="my-8 min-h-[5rem] flex items-center justify-center px-4">
+            <p
+              className={`text-lg md:text-xl text-center text-gray-300 italic transition-opacity duration-500 ${
+                visible ? 'opacity-100' : 'opacity-0'
+              }`}
+              style={{ direction: 'rtl' }}
+            >
+              "{quote}"
+            </p>
+          </div>
+        );
+      };
+
+      // --- Main App Component ---
+      const App = () => {
+        const { useState, useEffect } = React;
+        const [mainTitle, setMainTitle] = useState('');
+        const [showSubtitle, setShowSubtitle] = useState(false);
+        const [showGrid, setShowGrid] = useState(false);
+        const [quoteIndex, setQuoteIndex] = useState(0);
+
+        const fullTitle = "Welcome to the Fixed Prosthodontics Quiz Hub";
+
+        useEffect(() => {
+          const timer = setTimeout(() => {
+              let i = 0;
+              const interval = setInterval(() => {
+              if (i <= fullTitle.length) {
+                  setMainTitle(fullTitle.substring(0, i));
+                  i++;
+              } else {
+                  clearInterval(interval);
+                  setTimeout(() => setShowSubtitle(true), 300);
+                  setTimeout(() => setShowGrid(true), 600);
+              }
+              }, 80);
+              return () => clearInterval(interval);
+          }, 500);
+          return () => clearTimeout(timer);
+        }, []);
+
+        useEffect(() => {
+          const quoteInterval = setInterval(() => {
+            setQuoteIndex(prevIndex => (prevIndex + 1) % QUOTES.length);
+          }, 7000);
+
+          return () => clearInterval(quoteInterval);
+        }, []);
+
+
+        return (
+          <div className="relative min-h-screen w-full bg-gradient-to-br from-[#0a101f] via-[#0c1427] to-[#1a233b] text-white overflow-hidden">
+            <AnimatedBackground />
+            <div className="relative z-10 flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8 text-center">
+                <div className="max-w-4xl w-full">
+                  <div className="typewriter mb-4 min-h-[4rem] md:min-h-[5rem]">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-200 to-gray-400">
+                      {mainTitle}
+                    </h1>
+                  </div>
+                  
+                  <p className={`text-base md:text-lg text-gray-300 mb-2 transition-opacity duration-1000 ${showSubtitle ? 'opacity-100' : 'opacity-0'}`}>
+                    Select your quiz below and test your knowledge in restorative dentistry.
+                  </p>
+
+                  <div className={`transition-opacity duration-1000 ${showSubtitle ? 'opacity-100' : 'opacity-0'}`}>
+                    <MotivationalQuote quote={QUOTES[quoteIndex]} />
+                  </div>
+                  
+                  <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-8 transition-all duration-1000 ${showGrid ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                    {QUIZZES.map((quiz, index) => (
+                      <QuizCard key={index} quiz={quiz} />
+                    ))}
+                  </div>
+                </div>
+              </main>
+              <Footer />
+            </div>
+          </div>
+        );
+      };
+
+      // --- Render the App ---
+      const rootElement = document.getElementById('root');
+      const root = ReactDOM.createRoot(rootElement);
+      root.render(
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      );
+    </script>
+  </body>
+</html>
