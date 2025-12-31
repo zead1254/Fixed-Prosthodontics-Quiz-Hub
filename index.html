@@ -4,437 +4,103 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Fixed Prosthodontics Hub | TheBoss</title>
-    
-    <!-- Ultra-Premium Resources -->
+    <title>Fixed Prosthodontics Hub | Dr. Zead</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    
-    <!-- React & Babel Standalone -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --accent: #3b82f6;
+            --indigo-accent: #6366f1;
             --bg-dark: #020617;
-            --glass-bg: rgba(15, 23, 42, 0.7);
+            --glass-card: rgba(15, 23, 42, 0.4);
+            --border-light: rgba(255, 255, 255, 0.08);
         }
 
         body {
             font-family: 'Plus Jakarta Sans', 'Cairo', sans-serif;
             background-color: var(--bg-dark);
-            color: #f8fafc;
+            color: #f1f5f9;
             margin: 0;
             overflow-x: hidden;
+            line-height: 1.6;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Ambient Background Lighting */
-        .glow-sphere {
+        .cinematic-bg {
             position: fixed;
-            border-radius: 50%;
-            filter: blur(120px);
+            inset: 0;
+            background: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,20%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,20%,1) 0, transparent 50%);
             z-index: -1;
-            opacity: 0.3;
-            pointer-events: none;
-            animation: breathe 15s infinite alternate ease-in-out;
+            opacity: 0.8;
         }
-        .sphere-1 { width: 90vw; height: 90vw; background: radial-gradient(circle, #1e40af, transparent); top: -30%; left: -20%; }
-        .sphere-2 { width: 70vw; height: 70vw; background: radial-gradient(circle, #0ea5e9, transparent); bottom: -15%; right: -15%; animation-delay: -4s; }
+
+        .glass-v3 {
+            background: var(--glass-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-light);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-v3:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            background: rgba(15, 23, 42, 0.7);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Responsive Proportions */
+        .text-fluid-h1 { font-size: clamp(2.5rem, 8vw, 6rem); font-weight: 900; letter-spacing: -0.04em; }
+        .text-fluid-h2 { font-size: clamp(1.5rem, 5vw, 2.5rem); font-weight: 800; line-height: 1.2; }
+        .text-fluid-p { font-size: clamp(0.875rem, 2vw, 1.125rem); }
+
+        .arabic-luxury { font-family: 'Cairo', sans-serif; font-weight: 800; }
+
+        @keyframes shake-err {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .shake-error { animation: shake-err 0.4s ease-in-out; }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--indigo-accent); border-radius: 10px; }
         
-        @keyframes breathe {
-            0% { transform: translate(0, 0) scale(1); opacity: 0.25; }
-            100% { transform: translate(3vw, 5vh) scale(1.05); opacity: 0.35; }
+        .btn-boss {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-
-        /* Glassmorphism Evolution */
-        .glass {
-            background: var(--glass-bg);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+        .btn-boss:hover:not(:disabled) {
+            transform: translateY(-2px);
+            filter: brightness(1.2);
+            box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.6);
         }
+        .btn-boss:active:not(:disabled) { transform: translateY(0) scale(0.98); }
 
-        .premium-card {
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            cursor: pointer;
-        }
-        .premium-card:hover {
-            transform: translateY(-12px);
-            border-color: rgba(59, 130, 246, 0.5);
-            background: rgba(15, 23, 42, 0.9);
-            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.7), 0 0 30px rgba(59, 130, 246, 0.15);
-        }
-
-        .hero-title {
-            background: linear-gradient(180deg, #ffffff 0%, #64748b 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.04em;
-        }
-
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.3); border-radius: 20px; }
-
-        @keyframes robotHover { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-10px) rotate(2deg); } }
-        .robot-hover { animation: robotHover 4s infinite ease-in-out; }
-
-        .typewriter-cursor::after {
-            content: '|';
-            animation: blink 0.7s infinite;
-            color: #3b82f6;
-            margin-left: 2px;
-        }
-
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-        /* Nagging Message Animation */
-        @keyframes slideInNag {
-            0% { transform: translateX(120%); opacity: 0; }
-            10% { transform: translateX(0); opacity: 1; }
-            90% { transform: translateX(0); opacity: 1; }
-            100% { transform: translateX(120%); opacity: 0; }
-        }
-        .nag-active { animation: slideInNag 7s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
-
-        /* Responsive UI Overrides */
-        @media (max-width: 640px) {
-            .hero-title { font-size: 3.25rem !important; }
-            .nav-link { display: none; }
-            .grid-system { grid-template-columns: 1fr !important; padding: 0 1rem; }
-            .modal-inner { border-radius: 0 !important; width: 100% !important; height: 100% !important; max-height: 100% !important; }
+        .reveal { animation: revealIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes revealIn {
+            from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
     </style>
 <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
 </head>
 <body>
-    <div class="glow-sphere sphere-1"></div>
-    <div class="glow-sphere sphere-2"></div>
+    <div class="cinematic-bg"></div>
     <div id="root"></div>
-
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-
-        const QUOTES = [
-            "اطلبوا العلم من المهد إلى اللحد.",
-            "التميز ليس فعلاً، بل هو عادة.",
-            "إِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ.",
-            "النجاح رحلة مستمرة، وليس مجرد وصول.",
-            "العلم هو السلاح الوحيد الذي يمكنك استخدامه لتغيير العالم."
-        ];
-
-        const generateQuestions = (topic, count) => {
-            return Array.from({length: count}, (_, i) => ({
-                question: `Critical Clinical Concept in ${topic} #${i + 1}: Which of the following parameters is the most decisive factor for successful clinical longevity?`,
-                options: ["Biological Width Integrity", "Compressive Strength", "Marginal Adaptation", "Gingival Response"],
-                answer: "Biological Width Integrity"
-            }));
-        };
-
-        const QUIZZES = [
-            { id: 'q1', icon: '💎', title: 'Basics & Biology', description: 'Foundational principles of tooth preparation.', link: 'https://zead1254.github.io/Fixed-Prosthodontics-Quiz1/' },
-            { id: 'q2', icon: '⚔️', title: 'Full Metal Crowns', description: 'Preparation and materials for metal coverage.', link: 'https://zead1254.github.io/Full-Metal-Crown-Quiz-2/' },
-            { id: 'q3', icon: '⚙️', title: 'Instrumentation', description: 'Burs and tool selection for precise clinical work.', link: 'https://zead1254.github.io/dental-instruments-quiz3/' },
-            { id: 'q4', icon: '⚡', title: 'Bio-Mechanical Principles', description: 'Analysis of forces and resistance geometry.', link: 'https://zead1254.github.io/Bio-Mechanical-Principles-of-Tooth-Preparation-Quiz4/' },
-            { id: 'q5', icon: '🏛️', title: 'Advanced Stability', description: 'Expert questions on retention geometry and stability.', questions: generateQuestions("Stability", 40) },
-            { id: 'q6', icon: '❄️', title: 'Ceramic Systems', description: 'Advanced questions on all-ceramic preparation.', questions: generateQuestions("Ceramics", 40) },
-            { id: 'q7', icon: '🧪', title: 'Fabrication Flow', description: 'Laboratory steps and modern fabrication methods.', questions: generateQuestions("Lab Workflow", 40) },
-            { id: 'q8', icon: '🔱', title: 'PFM Principles', description: 'Metal-ceramic framework success and principles.', questions: generateQuestions("PFM Mastery", 40) }
-        ];
-
-        // --- UI COMPONENTS ---
-
-        const ProfessionalLogo = () => (
-            <svg className="w-10 h-10 text-blue-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L4 7V17L12 22L20 17V7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 22V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M20 7L12 12L4 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="12" cy="12" r="3" fill="currentColor" fillOpacity="0.2"/>
-            </svg>
-        );
-
-        const NaggingMessage = () => {
-            const [show, setShow] = useState(false);
-            const [hasFinished, setHasFinished] = useState(false);
-            
-            useEffect(() => {
-                if (hasFinished) return;
-
-                const initialDelay = setTimeout(() => {
-                    setShow(true);
-                    // Hide forever after 7 seconds (matching animation duration)
-                    setTimeout(() => {
-                        setShow(false);
-                        setHasFinished(true);
-                    }, 7000);
-                }, 2000); // 2 seconds after the intro finished
-
-                return () => clearTimeout(initialDelay);
-            }, [hasFinished]);
-
-            if (!show) return null;
-
-            return (
-                <div className="fixed top-24 right-0 z-[1500] p-4 nag-active">
-                    <div className="glass px-8 py-5 rounded-l-[2rem] border-r-0 border-blue-500 shadow-2xl flex items-center gap-4 bg-blue-900/20">
-                        <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-xl shadow-lg shadow-blue-600/30">🤔</div>
-                        <p className="text-xl sm:text-2xl font-black text-white" style={{ direction: 'rtl' }}>مش دعيت ليه ؟؟</p>
-                    </div>
-                </div>
-            );
-        };
-
-        const InitialRobotMessage = ({ onFinish }) => {
-            const [isVisible, setIsVisible] = useState(false);
-            const [typedText, setTypedText] = useState("");
-            const [phase, setPhase] = useState(0); 
-            
-            const mainText = "جميع هذه الأسئلة تم إنشاؤها بواسطة الذكاء الاصطناعي.. ";
-            const bossText = "ما تنسوش تدعوا للـ Boss";
-
-            useEffect(() => {
-                const startTimer = setTimeout(() => {
-                    setIsVisible(true);
-                    setPhase(1);
-                }, 800);
-                return () => clearTimeout(startTimer);
-            }, []);
-
-            useEffect(() => {
-                if (phase === 1) {
-                    let i = 0;
-                    const interval = setInterval(() => {
-                        setTypedText(mainText.slice(0, i + 1));
-                        i++;
-                        if (i >= mainText.length) {
-                            clearInterval(interval);
-                            setTimeout(() => setPhase(2), 500);
-                        }
-                    }, 50);
-                    return () => clearInterval(interval);
-                } else if (phase === 2) {
-                    let i = 0;
-                    const interval = setInterval(() => {
-                        setTypedText(mainText + bossText.slice(0, i + 1));
-                        i++;
-                        if (i >= bossText.length) {
-                            clearInterval(interval);
-                            setPhase(3);
-                        }
-                    }, 50);
-                    return () => clearInterval(interval);
-                }
-            }, [phase]);
-
-            if (!isVisible) return null;
-
-            const displayMain = typedText.includes(mainText) ? mainText : typedText;
-            const displayBoss = typedText.includes(mainText) ? typedText.replace(mainText, "") : "";
-
-            const closeMessage = () => {
-                setIsVisible(false);
-                onFinish();
-            };
-
-            return (
-                <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-500">
-                    <div className="glass p-10 sm:p-14 rounded-[3.5rem] max-w-lg w-full text-center border-t-2 border-blue-600 shadow-2xl relative animate-in zoom-in duration-300">
-                        <div className="bg-blue-600/10 w-28 h-28 rounded-3xl mx-auto mb-8 flex items-center justify-center robot-hover border border-blue-500/20 shadow-inner">
-                            <svg className="w-14 h-14 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                        </div>
-                        <h4 className="text-blue-500 font-black uppercase tracking-[0.4em] text-xs mb-6">AI System Initialized</h4>
-                        
-                        <div className="min-h-[160px] flex flex-col justify-center">
-                            <p className={`text-2xl sm:text-3xl font-black leading-tight text-white ${phase < 3 ? 'typewriter-cursor' : ''}`} style={{ direction: 'rtl' }}>
-                                {displayMain}
-                                {displayBoss && (
-                                    <span className="block mt-4 text-3xl sm:text-4xl text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]">
-                                        {displayBoss}
-                                    </span>
-                                )}
-                            </p>
-                        </div>
-
-                        <div className={`mt-10 transition-all duration-700 ${phase === 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
-                            <button onClick={closeMessage} className="w-full py-6 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-xl transition-all shadow-xl shadow-blue-600/30 active:scale-95 uppercase tracking-widest">
-                                ENTER HUB
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        const QuizModal = ({ quiz, onClose }) => {
-            const [idx, setIdx] = useState(0);
-            const [score, setScore] = useState(0);
-            const [pick, setPick] = useState(null);
-            const [done, setDone] = useState(false);
-            const scrollRef = useRef(null);
-
-            useEffect(() => {
-                document.body.style.overflow = 'hidden';
-                return () => document.body.style.overflow = 'auto';
-            }, []);
-
-            const next = () => {
-                if (idx < quiz.questions.length - 1) {
-                    setIdx(idx + 1); setPick(null);
-                    scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-                } else setDone(true);
-            };
-
-            const select = (opt) => { if (!pick) { setPick(opt); if (opt === quiz.questions[idx].answer) setScore(score + 1); } };
-
-            if (done) return (
-                <div className="fixed inset-0 z-[3000] glass flex items-center justify-center p-6">
-                    <div className="glass p-16 rounded-[4rem] max-w-md w-full text-center border-blue-500/20 shadow-2xl">
-                        <h2 className="text-4xl font-black text-white mb-6 uppercase">Final Evaluation</h2>
-                        <div className="text-[10rem] font-black text-blue-500 mb-8 leading-none drop-shadow-[0_0_30px_rgba(59,130,246,0.5)]">
-                            {Math.round((score / quiz.questions.length) * 100)}%
-                        </div>
-                        <p className="text-xl text-gray-500 mb-12 font-bold uppercase tracking-widest">Efficiency: {score} / {quiz.questions.length}</p>
-                        <button onClick={onClose} className="w-full py-6 bg-blue-600 rounded-3xl font-black text-xl hover:bg-blue-500 shadow-xl shadow-blue-600/40 transition-all active:scale-95">CLOSE ACCESS</button>
-                    </div>
-                </div>
-            );
-
-            const q = quiz.questions[idx];
-
-            return (
-                <div className="fixed inset-0 z-[2500] bg-black/98 flex items-center justify-center sm:p-8 overflow-hidden">
-                    <div ref={scrollRef} className="bg-[#020617] border border-white/5 modal-inner w-full max-w-4xl h-full sm:h-[90vh] overflow-y-auto custom-scroll relative flex flex-col shadow-2xl sm:rounded-[4rem]">
-                        <header className="sticky top-0 bg-[#020617]/90 backdrop-blur-xl border-b border-white/5 p-8 flex justify-between items-center z-50">
-                            <div className="flex items-center gap-6">
-                                <span className="text-4xl">{quiz.icon}</span>
-                                <div>
-                                    <h5 className="text-sm font-black text-blue-500 uppercase tracking-widest">{quiz.title}</h5>
-                                    <div className="h-1.5 w-40 bg-gray-900 rounded-full mt-2 overflow-hidden">
-                                        <div className="h-full bg-blue-500 transition-all duration-1000" style={{ width: `${((idx+1)/quiz.questions.length)*100}%` }}></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button onClick={onClose} className="text-gray-600 hover:text-white transition-all"><svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-                        </header>
-
-                        <div className="p-10 sm:p-20 flex-grow">
-                            <div className="text-[10px] font-black text-blue-600 mb-4 uppercase tracking-[0.5em]">Question {idx + 1} of {quiz.questions.length}</div>
-                            <h2 className="text-3xl sm:text-5xl font-black text-white leading-[1.15] mb-16">{q.question}</h2>
-
-                            <div className="space-y-5 mb-16">
-                                {q.options.map((opt, i) => {
-                                    let style = "w-full p-8 text-left rounded-[2.5rem] border-2 transition-all duration-300 flex items-center gap-8 ";
-                                    if (!pick) style += "border-white/5 bg-white/5 hover:border-blue-500/50 hover:bg-white/10 hover:translate-x-3";
-                                    else if (opt === q.answer) style += "border-green-500 bg-green-500/10 text-green-400";
-                                    else if (opt === pick) style += "border-red-500 bg-red-500/10 text-red-400";
-                                    else style += "border-white/5 opacity-20 scale-95";
-
-                                    return (
-                                        <button key={i} onClick={() => select(opt)} disabled={!!pick} className={style}>
-                                            <span className="w-12 h-12 rounded-2xl glass flex items-center justify-center font-black text-sm border border-white/10 shrink-0">{String.fromCharCode(65+i)}</span>
-                                            <span className="text-xl sm:text-2xl font-bold">{opt}</span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-
-                            <button onClick={next} disabled={!pick} className={`w-full py-8 rounded-[2.5rem] font-black text-2xl transition-all ${pick ? 'bg-blue-600 shadow-2xl shadow-blue-500/40' : 'bg-gray-800 text-gray-700 opacity-50 cursor-not-allowed'}`}>
-                                NEXT PHASE
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        const App = () => {
-            const [active, setActive] = useState(null);
-            const [quote, setQuote] = useState(QUOTES[0]);
-            const [introFinished, setIntroFinished] = useState(false);
-
-            useEffect(() => {
-                const i = setInterval(() => setQuote(QUOTES[Math.floor(Math.random() * QUOTES.length)]), 12000);
-                return () => clearInterval(i);
-            }, []);
-
-            return (
-                <div className="min-h-screen flex flex-col">
-                    <nav className="p-8 border-b border-white/5 bg-black/50 backdrop-blur-2xl sticky top-0 z-[1000] flex justify-between items-center px-10 sm:px-16">
-                        <div className="flex items-center gap-6">
-                            <ProfessionalLogo />
-                            <div>
-                                <h1 className="font-black text-2xl tracking-tighter leading-none">THE<span className="text-blue-500">BOSS</span></h1>
-                            </div>
-                        </div>
-                        <a href="https://zead1254.github.io/Dr_zead" target="_blank" className="nav-link text-[11px] font-black border-2 border-white/5 px-8 py-3 rounded-full hover:bg-white hover:text-black transition-all uppercase tracking-widest">Designer Portfolio</a>
-                    </nav>
-
-                    <main className="container mx-auto pt-28 pb-40 text-center">
-                        <header className="max-w-5xl mx-auto mb-32 px-6">
-                            <h1 className="hero-title text-7xl md:text-[9.5rem] font-black mb-12 leading-[0.9]">Fixed Prosthodontics</h1>
-                            
-                            <div className="glass px-10 py-8 rounded-[3rem] inline-flex items-center border border-blue-500/10 shadow-2xl max-w-full">
-                                <p className="text-2xl md:text-4xl font-black italic text-blue-200 leading-relaxed" style={{ direction: 'rtl' }}>"{quote}"</p>
-                            </div>
-                        </header>
-
-                        <div className="grid-system grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto px-6">
-                            {QUIZZES.map(q => (
-                                <div key={q.id} className="premium-card glass p-10 rounded-[3.5rem] text-left flex flex-col relative overflow-hidden group">
-                                    <div className="text-7xl mb-10 bg-blue-600/5 w-28 h-28 flex items-center justify-center rounded-[2.5rem] border border-white/5 group-hover:scale-110 group-hover:bg-blue-600/10 transition-all duration-700">{q.icon}</div>
-                                    <h3 className="text-2xl font-black mb-4 tracking-tight uppercase group-hover:text-blue-400 transition-colors">{q.title}</h3>
-                                    <p className="text-gray-500 mb-12 leading-relaxed font-bold flex-grow text-sm opacity-80">{q.description}</p>
-                                    <button 
-                                        onClick={() => q.questions ? setActive(q) : window.open(q.link, '_blank')}
-                                        className="w-full py-5 bg-white/5 border border-white/10 rounded-3xl font-black hover:bg-blue-600 transition-all shadow-xl uppercase text-xs tracking-[0.2em] group-hover:shadow-blue-600/20"
-                                    >
-                                        {q.questions ? 'START QUIZ' : 'LAUNCH LINK'}
-                                    </button>
-                                    {q.questions && <div className="absolute top-8 right-10 text-[9px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/5 px-3 py-1.5 rounded-xl border border-blue-500/10">40 Q'S</div>}
-                                </div>
-                            ))}
-                        </div>
-
-                        <footer className="mt-40 pt-20 border-t border-white/5 text-center">
-                            <div className="flex flex-col items-center gap-8">
-                                <div className="flex items-center gap-3 opacity-20">
-                                    <div className="w-12 h-1 bg-white rounded-full"></div>
-                                    <div className="w-3 h-3 bg-white rounded-full"></div>
-                                    <div className="w-12 h-1 bg-white rounded-full"></div>
-                                </div>
-                                <div>
-                                    <p className="text-[11px] font-black text-gray-700 uppercase tracking-[0.8em] mb-4">Developed & Designed by</p>
-                                    <div className="text-6xl font-black text-white/90 tracking-tighter">THE<span className="text-blue-600">BOSS</span></div>
-                                </div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-800">Advanced Prosthetic Research Hub © 2025</p>
-                            </div>
-                        </footer>
-                    </main>
-
-                    <InitialRobotMessage onFinish={() => setIntroFinished(true)} />
-                    {introFinished && <NaggingMessage />}
-                    {active && <QuizModal quiz={active} onClose={() => setActive(null)} />}
-                </div>
-            );
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+    <script type="module" src="index.tsx"></script>
 </body>
 </html>
