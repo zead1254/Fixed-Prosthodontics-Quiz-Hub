@@ -1,106 +1,157 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Fixed Prosthodontics Hub | Dr. Zead</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --indigo-accent: #6366f1;
-            --bg-dark: #020617;
-            --glass-card: rgba(15, 23, 42, 0.4);
-            --border-light: rgba(255, 255, 255, 0.08);
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', 'Cairo', sans-serif;
-            background-color: var(--bg-dark);
-            color: #f1f5f9;
-            margin: 0;
-            overflow-x: hidden;
-            line-height: 1.6;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .cinematic-bg {
-            position: fixed;
-            inset: 0;
-            background: 
-                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-                radial-gradient(at 50% 0%, hsla(225,39%,20%,1) 0, transparent 50%), 
-                radial-gradient(at 100% 0%, hsla(339,49%,20%,1) 0, transparent 50%);
-            z-index: -1;
-            opacity: 0.8;
-        }
-
-        .glass-v3 {
-            background: var(--glass-card);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--border-light);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .glass-v3:hover {
-            border-color: rgba(99, 102, 241, 0.4);
-            background: rgba(15, 23, 42, 0.7);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.8);
-        }
-
-        /* Responsive Proportions */
-        .text-fluid-h1 { font-size: clamp(2.5rem, 8vw, 6rem); font-weight: 900; letter-spacing: -0.04em; }
-        .text-fluid-h2 { font-size: clamp(1.5rem, 5vw, 2.5rem); font-weight: 800; line-height: 1.2; }
-        .text-fluid-p { font-size: clamp(0.875rem, 2vw, 1.125rem); }
-
-        .arabic-luxury { font-family: 'Cairo', sans-serif; font-weight: 800; }
-
-        @keyframes shake-err {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        .shake-error { animation: shake-err 0.4s ease-in-out; }
-
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--indigo-accent); border-radius: 10px; }
-        
-        .btn-boss {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        .btn-boss:hover:not(:disabled) {
-            transform: translateY(-2px);
-            filter: brightness(1.2);
-            box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.6);
-        }
-        .btn-boss:active:not(:disabled) { transform: translateY(0) scale(0.98); }
-
-        .reveal { animation: revealIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes revealIn {
-            from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
-            to { opacity: 1; transform: translateY(0); filter: blur(0); }
-        }
-    </style>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/"
-  }
-}
-</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed Prosthodontics Mastery - Professional Quizzes</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="cinematic-bg"></div>
-    <div id="root"></div>
-    <script type="module" src="index.tsx"></script>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-tooth dental-icon"></i>
+                <span class="brand-text">Fixed Prosthodontics</span>
+                <span class="brand-sub">Professional Quizzes</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link active"><i class="fas fa-home"></i> Home</a>
+                <a href="#quizzes" class="nav-link"><i class="fas fa-question-circle"></i> Quizzes</a>
+                <div class="offline-status">
+                    <i class="fas fa-wifi"></i>
+                    <span>Offline Ready</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Master Fixed Prosthodontics</h1>
+                <p class="hero-subtitle">Professional Offline Quiz Platform for Dental Students & Practitioners</p>
+                <div class="hero-message">
+                    <div class="message-box">
+                        <i class="fas fa-robot"></i>
+                        <div class="message-content">
+                            <p class="message-text-arabic">جميع الأسئلة تم إنشاؤها بواسطة الذكاء الاصطناعي</p>
+                            <p class="message-text-english">All questions are AI-generated</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="#quizzes" class="cta-button">
+                    <span>Start Learning</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="hero-image">
+                <div class="dental-icon-large">
+                    <i class="fas fa-crown"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Quizzes Grid -->
+    <main class="main-content" id="quizzes">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Fixed Prosthodontics Quizzes</h2>
+                <p class="section-subtitle">Comprehensive quiz bank covering all topics in fixed prosthodontics</p>
+            </div>
+            
+            <div class="quizzes-grid" id="quizzesGrid">
+                <!-- Quizzes will be loaded by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why Choose Our Platform</h2>
+                <p class="section-subtitle">Professional features designed for optimal learning experience</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="feature-title">Offline Access</h3>
+                    <p class="feature-desc">All quizzes available without internet connection. Study anywhere, anytime.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="feature-title">Professional Content</h3>
+                    <p class="feature-desc">High-quality questions created by dental education specialists.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Progress Tracking</h3>
+                    <p class="feature-desc">Monitor your performance and identify areas for improvement.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Responsive Design</h3>
+                    <p class="feature-desc">Optimized for all devices - desktop, tablet, and mobile.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <i class="fas fa-tooth"></i>
+                        <span>Fixed Prosthodontics</span>
+                    </div>
+                    <p class="footer-desc">Professional offline quiz platform for dental education.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-title">Quick Links</h4>
+                    <a href="index.html" class="footer-link">Home</a>
+                    <a href="#quizzes" class="footer-link">All Quizzes</a>
+                </div>
+                
+                <div class="footer-info">
+                    <h4 class="footer-title">Information</h4>
+                    <p class="footer-text"><i class="fas fa-code"></i> Developed by <strong>The Boss</strong></p>
+                    <p class="footer-text"><i class="fas fa-brain"></i> AI-Generated Questions</p>
+                    <div class="prayer-box">
+                        <i class="fas fa-hands-praying"></i>
+                        <span>Pray for The Boss</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="copyright">&copy; 2023 Fixed Prosthodontics Quizzes. All rights reserved.</p>
+                <p class="signature">Professionally crafted for dental education excellence</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
