@@ -1,15 +1,19 @@
 
 export interface Question {
-  question: string;
+  id: string;
+  text: string;
   options: string[];
   answer: string;
 }
 
-export interface Quiz {
+export interface QuizData {
   id: string;
-  icon: string;
   title: string;
   description: string;
+  icon: string;
+  isExternal: boolean;
   link?: string;
   questions?: Question[];
 }
+
+export type ViewState = 'home' | 'quiz' | 'result';

@@ -3,155 +3,623 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fixed Prosthodontics Mastery - Professional Quizzes</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Fixed Prosthodontics Mastery | BOSS Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+        .arabic-text { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+        
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-10px); }
+          75% { transform: translateX(10px); }
+        }
+        .shake { animation: shake 0.2s ease-in-out 0s 2; }
+
+        @keyframes float-up {
+          0% { opacity: 0; transform: translateY(0); }
+          20% { opacity: 1; }
+          100% { opacity: 0; transform: translateY(-120px); }
+        }
+        .xp-float { animation: float-up 1.3s ease-out forwards; pointer-events: none; }
+
+        @keyframes pulse-glow {
+          0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+          70% { box-shadow: 0 0 0 20px rgba(34, 197, 94, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+        .correct-glow { animation: pulse-glow 1s infinite; }
+
+        .fire-timer {
+          background: linear-gradient(90deg, #3b82f6, #ef4444, #f97316);
+          background-size: 300% 300%;
+          animation: gradient-move 1.5s ease infinite;
+        }
+
+        @keyframes gradient-move {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        .shadow-xl { transition: shadow 0.3s ease-in-out; }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.475.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <i class="fas fa-tooth dental-icon"></i>
-                <span class="brand-text">Fixed Prosthodontics</span>
-                <span class="brand-sub">Professional Quizzes</span>
-            </div>
-            <div class="nav-links">
-                <a href="index.html" class="nav-link active"><i class="fas fa-home"></i> Home</a>
-                <a href="#quizzes" class="nav-link"><i class="fas fa-question-circle"></i> Quizzes</a>
-                <div class="offline-status">
-                    <i class="fas fa-wifi"></i>
-                    <span>Offline Ready</span>
-                </div>
-            </div>
-        </div>
-    </nav>
+<body class="bg-[#F8FAFC] text-slate-900 selection:bg-blue-100 selection:text-blue-600">
+    <div id="root"></div>
 
-    <!-- Hero Section -->
-    <header class="hero">
-        <div class="hero-container">
-            <div class="hero-content">
-                <h1 class="hero-title">Master Fixed Prosthodontics</h1>
-                <p class="hero-subtitle">Professional Offline Quiz Platform for Dental Students & Practitioners</p>
-                <div class="hero-message">
-                    <div class="message-box">
-                        <i class="fas fa-robot"></i>
-                        <div class="message-content">
-                            <p class="message-text-arabic">جميع الأسئلة تم إنشاؤها بواسطة الذكاء الاصطناعي</p>
-                            <p class="message-text-english">All questions are AI-generated</p>
-                        </div>
-                    </div>
-                </div>
-                <a href="#quizzes" class="cta-button">
-                    <span>Start Learning</span>
-                    <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-            <div class="hero-image">
-                <div class="dental-icon-large">
-                    <i class="fas fa-crown"></i>
-                </div>
-            </div>
-        </div>
-    </header>
+    <script type="module">
+        import React, { useState, useEffect, useRef } from 'react';
+        import ReactDOM from 'react-dom/client';
+        import { 
+          ChevronRight, Trophy, ArrowLeft, Stethoscope, Sparkles, Award, 
+          BookOpen, Zap, Flame, Shield, Clock, Skull, Star, Brain, Ghost, Volume2 
+        } from 'lucide-react';
 
-    <!-- Quizzes Grid -->
-    <main class="main-content" id="quizzes">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Fixed Prosthodontics Quizzes</h2>
-                <p class="section-subtitle">Comprehensive quiz bank covering all topics in fixed prosthodontics</p>
-            </div>
-            
-            <div class="quizzes-grid" id="quizzesGrid">
-                <!-- Quizzes will be loaded by JavaScript -->
-            </div>
-        </div>
-    </main>
+        // --- DATA SECTION ---
+        const QUIZZES = [
+          {
+            id: 'q1',
+            title: 'Basics & Biology',
+            description: 'Foundational principles of tooth preparation and biological considerations.',
+            icon: '🦷',
+            isExternal: true,
+            link: 'https://zead1254.github.io/Fixed-Prosthodontics-Quiz1/'
+          },
+          {
+            id: 'q2',
+            title: 'Full Metal Crowns',
+            description: 'Preparation guidelines and materials for complete metal coverage.',
+            icon: '🛡️',
+            isExternal: true,
+            link: 'https://zead1254.github.io/Full-Metal-Crown-Quiz-2/'
+          },
+          {
+            id: 'q3',
+            title: 'Instrumentation',
+            description: 'Burs selection and advanced tool geometry for clinical precision.',
+            icon: '📐',
+            isExternal: true,
+            link: 'https://zead1254.github.io/dental-instruments-quiz3/'
+          },
+          {
+            id: 'q4',
+            title: 'Bio-Mechanical Principles',
+            description: 'Structural integrity, force analysis, and resistance geometry.',
+            icon: '⚡',
+            isExternal: true,
+            link: 'https://zead1254.github.io/Bio-Mechanical-Principles-of-Tooth-Preparation-Quiz4/'
+          },
+          {
+            id: 'q5',
+            title: 'Retention & Resistance',
+            description: 'Lecture 5: Comprehensive analysis of stability and retention forms.',
+            icon: '🏛️',
+            isExternal: false,
+            questions: [
+              { id: '5-1', text: 'Retention form is defined as the feature of a preparation that resists dislodgement by forces parallel to:', options: ['A) The occlusal plane', 'B) The horizontal axis', 'C) The path of insertion', 'D) The gingival floor'], answer: 'C' },
+              { id: '5-2', text: 'The imaginary line along which a restoration is placed or removed is called:', options: ['A) The tipping path', 'B) The path of insertion', 'C) The long axis of the crown', 'D) The arc of rotation'], answer: 'B' },
+              { id: '5-3', text: 'For an anterior crown, the path of insertion should be parallel with:', options: ['A) The long axis of the tooth', 'B) The incisal two-thirds of the facial surface', 'C) The cervical third of the facial surface', 'D) The lingual concavity'], answer: 'B' },
+              { id: '5-4', text: 'Which factor directly increases the surface area and, consequently, the retention?', options: ['A) Increasing the taper', 'B) Decreasing the height of axial walls', 'C) Increasing the length of axial walls', 'D) Rounding the external angles'], answer: 'C' },
+              { id: '5-5', text: 'The recommended clinical convergence angle (taper) for maximum retention and seating is:', options: ['A) 0 degrees', 'B) 6 degrees', 'C) 15 degrees', 'D) 20 degrees'], answer: 'B' },
+              { id: '5-6', text: 'What is the effect of an "undercut" (reverse taper) on a preparation?', options: ['A) It increases retention significantly', 'B) It makes the restoration easier to seat', 'C) It prevents the restoration from being seated', 'D) It reduces the need for cement'], answer: 'C' },
+              { id: '5-7', text: 'Rounding internal line and point angles increases retention by:', options: ['A) Increasing the taper', 'B) Reducing stress concentration', 'C) Increasing the surface area', 'D) Making the preparation smoother'], answer: 'B' },
+              { id: '5-8', text: 'Which alloy type provides better retention due to its high chemical reactivity with luting cements?', options: ['A) High gold-content alloy', 'B) Noble metal alloy', 'C) Base metal alloy', 'D) Titanium alloy'], answer: 'C' },
+              { id: '5-9', text: '(CONCEPTUAL) Why is a "zero-degree" parallel preparation avoided despite being theoretically ideal for retention?', options: ['A) It causes pulp exposure in all cases', 'B) It creates hydrostatic pressure that prevents the escape of cement', 'C) It makes the restoration too thin', 'D) It requires specialized laboratory equipment'], answer: 'B' },
+              { id: '5-10', text: 'Resistance form is designed to prevent dislodgement by forces in which direction?', options: ['A) Parallel to the path of insertion', 'B) Oblique or horizontal', 'C) Purely vertical (tensile)', 'D) Along the long axis'], answer: 'B' },
+              { id: '5-11', text: 'The "Tipping Path" refers to the arc of rotation of a restoration under:', options: ['A) Vertical forces', 'B) Displacing occlusal forces', 'C) Cementation pressure', 'D) Polishing forces'], answer: 'B' },
+              { id: '5-12', text: 'In parafunctional habits like Bruxism, the restoration must primarily resist:', options: ['A) Sticky food forces', 'B) Axial forces', 'C) Oblique and lateral forces', 'D) Compressive forces only'], answer: 'C' },
+              { id: '5-13', text: 'U-shaped and box-shaped grooves provide better resistance than V-shaped grooves because:', options: ['A) They are easier to drill', 'B) Their walls are perpendicular to the applied force', 'C) They increase the taper', 'D) They use less metal'], answer: 'B' },
+              { id: '5-14', text: 'Which property of cement increases resistance to displacement?', options: ['A) High solubility', 'B) Low modulus of elasticity', 'C) High compressive strength', 'D) Long setting time'], answer: 'C' },
+              { id: '5-15', text: 'The required occlusal clearance for a functional cusp of a full metal crown is:', options: ['A) 0.5 mm', 'B) 1.0 mm', 'C) 1.5 mm', 'D) 2.0 mm'], answer: 'C' },
+              { id: '5-16', text: 'Structural durability is influenced by all EXCEPT:', options: ['A) Occlusal reduction', 'B) Functional cusp bevel', 'C) Luting cement type', 'D) Axial reduction'], answer: 'C' },
+              { id: '5-17', text: 'Occlusal reduction must follow the natural morphology of the tooth to:', options: ['A) Increase the taper', 'B) Provide uniform bulk and conserve tooth structure', 'C) Reduce cost', 'D) Make laboratory work easier'], answer: 'B' },
+              { id: '5-18', text: 'The "Permissible Taper Rule" states that the allowed taper is directly proportional to:', options: ['A) The width of the tooth', 'B) The height/width ratio', 'C) The type of cement used', 'D) The age of the patient'], answer: 'B' },
+              { id: '5-19', text: '(CONCEPTUAL) If a preparation has a "short clinical crown," why does it lose resistance even with 6 degrees taper?', options: ['A) The surface area is too large', 'B) The arc of rotation (tipping path) is not blocked by enough tooth structure', 'C) Pulp sensitivity', 'D) Adhesive cement requirement'], answer: 'B' },
+              { id: '5-20', text: 'Retention of a full coverage crown is approximately _______ that of a partial coverage crown.', options: ['A) Half', 'B) The same as', 'C) Double', 'D) Triple'], answer: 'C' },
+              { id: '5-21', text: 'Roughening the fitting surface of a restoration is typically done with:', options: ['A) 50 μm alumina particles', 'B) 100 μm diamond burs', 'C) Hydrogen peroxide', 'D) Distilled water'], answer: 'A' },
+              { id: '5-22', text: 'Which of the following is considered an "Internal Surface" for retention?', options: ['A) Lingual wall of a full crown', 'B) Buccal wall of a full crown', 'C) Proximal box of an inlay', 'D) Facial surface of a crown'], answer: 'C' },
+              { id: '5-23', text: 'Increased taper leads to:', options: ['A) A limited path of withdrawal', 'B) An unlimited path of withdrawal', 'C) Increased resistance form', 'D) Better marginal integrity'], answer: 'B' },
+              { id: '5-24', text: 'Adhesive resin cements are the most retentive because they offer:', options: ['A) Chemical bonding only', 'B) Micromechanical interlocking and chemical bonding', 'C) Higher thickness', 'D) Better color'], answer: 'B' },
+              { id: '5-25', text: 'The non-functional cusp reduction for a metal-ceramic crown is:', options: ['A) 0.5 mm', 'B) 1.0 - 1.5 mm', 'C) 2.0 mm', 'D) 2.5 mm'], answer: 'B' },
+              { id: '5-26', text: 'Which feature is used to provide space for metal on the occlusal surface?', options: ['A) Pinholes', 'B) Occlusal shoulder/offset', 'C) Taper', 'D) Bevel'], answer: 'B' },
+              { id: '5-27', text: 'Point angles are rounded during preparation to:', options: ['A) Increase cement thickness', 'B) Decrease stress concentration', 'C) Speed up preparation', 'D) Prevent pulp exposure'], answer: 'B' },
+              { id: '5-28', text: 'In tilted posterior teeth, the path of insertion is determined relative to:', options: ['A) The long axis of that specific tooth', 'B) The adjacent teeth', 'C) The floor of the mouth', 'D) The tongue'], answer: 'B' },
+              { id: '5-29', text: '(CONCEPTUAL) Why do we place grooves in an over-tapered preparation?', options: ['A) Complexity', 'B) To limit the "arc of rotation" by blocking it with groove walls', 'C) Increase cement use', 'D) Decrease surface area'], answer: 'B' },
+              { id: '5-30', text: 'Stickiness of food is a factor that affects:', options: ['A) Geometry of prep', 'B) Magnitude of dislodging forces', 'C) Luting cement choice', 'D) Structural durability'], answer: 'B' },
+              { id: '5-31', text: 'Mechanical interlocking is a primary feature of:', options: ['A) Zinc oxide eugenol', 'B) Adhesive resin cements', 'C) Varnish', 'D) Composite filling'], answer: 'B' },
+              { id: '5-32', text: 'A preparation with long axial walls has more retention than a short one because of:', options: ['A) Lower taper', 'B) Increased surface area', 'C) Better aesthetics', 'D) Less cement'], answer: 'B' },
+              { id: '5-33', text: 'Functional cusp bevel is essential for:', options: ['A) Aesthetics', 'B) Structural durability', 'C) Taper', 'D) Retention'], answer: 'B' },
+              { id: '5-34', text: 'External surfaces for retention are the buccal and lingual walls of:', options: ['A) An inlay', 'B) A full veneer crown', 'C) A pin', 'D) A bridge pontic'], answer: 'B' },
+              { id: '5-35', text: 'The relationship between taper and retention is:', options: ['A) Directly proportional', 'B) Inversely proportional', 'C) Linear', 'D) Non-existent'], answer: 'B' },
+              { id: '5-36', text: 'Path of insertion for posterior crowns is usually:', options: ['A) 45 deg to long axis', 'B) Parallel with long axis', 'C) Parallel to facial surface', 'D) Horizontal'], answer: 'B' },
+              { id: '5-37', text: 'Magnitude of dislodging forces depends on:', options: ['A) Taper', 'B) Texture of the restoration', 'C) Type of gold', 'D) Preparation length'], answer: 'B' },
+              { id: '5-38', text: 'The "Box Isthmus" provides:', options: ['A) Retention only', 'B) Space for metal (Structural durability)', 'C) Better color', 'D) Faster prep'], answer: 'B' },
+              { id: '5-39', text: 'How does the "Modulus of Elasticity" of a cement relate to resistance?', options: ['A) Higher means more flexible', 'B) Higher means stiffer, providing better support against tipping', 'C) Only affects color', 'D) No clinical relevance'], answer: 'B' },
+              { id: '5-40', text: 'Clinical consequence of ignoring the "Functional Cusp Bevel":', options: ['A) The crown will be too thin at stress-bearing area', 'B) Too much retention', 'C) Tooth sensitivity', 'D) Fast cement setting'], answer: 'A' }
+            ]
+          },
+          {
+            id: 'q6',
+            title: 'All-Ceramic Systems',
+            description: 'Lecture 6: Detailed study of esthetic restorations and rounded preparation designs.',
+            icon: '❄️',
+            isExternal: false,
+            questions: [
+              { id: '6-1', text: 'Which of the following is a primary advantage of all-ceramic crowns?', options: ['A) High thermal conductivity', 'B) Excellent translucency and superior esthetics', 'C) High metal content', 'D) Low cost'], answer: 'B' },
+              { id: '6-2', text: 'The most critical design feature to minimize fracture risk in all-ceramic crowns is:', options: ['A) Sharp line angles', 'B) Rounded shoulder margin', 'C) Heavy bevels', 'D) Minimum reduction'], answer: 'B' },
+              { id: '6-3', text: 'What is a notable disadvantage of ceramic functional surfaces?', options: ['A) Too soft', 'B) Wear down opposing natural teeth', 'C) Change color', 'D) High conductivity'], answer: 'B' },
+              { id: '6-4', text: 'All-ceramic crowns are contraindicated in:', options: ['A) Malformed teeth', 'B) Young patients with large vital pulps', 'C) Discolored teeth', 'D) Anterior fractures'], answer: 'B' },
+              { id: '6-5', text: 'A "Half-moon" fracture in the labiogingival area is often caused by:', options: ['A) Excessive thickness', 'B) Over-shortening of the preparation', 'C) Resin cement use', 'D) Sharp edges'], answer: 'B' },
+              { id: '6-6', text: 'In deep bite cases, occluding on the cervical fifth of the lingual surface produces:', options: ['A) Compressive stresses', 'B) Tensile stresses', 'C) No stress', 'D) Shear stresses'], answer: 'B' },
+              { id: '6-7', text: 'The instrument used for incisal reduction is:', options: ['A) Wheel diamond', 'B) Flat-end tapered diamond', 'C) Needle diamond', 'D) Round bur'], answer: 'B' },
+              { id: '6-8', text: 'Labial reduction of an anterior tooth is performed in:', options: ['A) One plane', 'B) Two planes', 'C) Three planes', 'D) Vertical lines'], answer: 'B' },
+              { id: '6-9', text: '(CONCEPTUAL) Why is all-ceramic preparation "least conservative" vs PFM?', options: ['A) Metal coping', 'B) Deep, uniform shoulder (1.0-1.5mm) required circumferentially', 'C) Incisal reduction', 'D) Small teeth'], answer: 'B' },
+              { id: '6-10', text: 'The lingual reduction (axial) instrument:', options: ['A) Small wheel diamond', 'B) Flat-end tapered diamond', 'C) Round bur', 'D) Flame bur'], answer: 'B' },
+              { id: '6-11', text: 'Final shoulder finishing is ideally done with:', options: ['A) High-speed diamond', 'B) End-cutting bur and hand chisels', 'C) Polishing paste', 'D) Wheel diamond'], answer: 'B' },
+              { id: '6-12', text: 'All-ceramic crowns indicated for fractured teeth if fracture involves:', options: ['A) > 1/2 length', 'B) < 1/3 length', 'C) Root only', 'D) Whole crown'], answer: 'B' },
+              { id: '6-13', text: 'Which condition results in stress concentration in the incisal area?', options: ['A) Deep bite', 'B) Edge-to-edge relationship', 'C) Class II occlusion', 'D) Open bite'], answer: 'B' },
+              { id: '6-14', text: 'The finishing bur number for axial finishing is:', options: ['A) 330', 'B) 171', 'C) 557', 'D) 701'], answer: 'B' },
+              { id: '6-15', text: 'Which is an indication for all-ceramic crown?', options: ['A) Bruxism', 'B) Discolored teeth due to RCT or trauma', 'C) Short crowns', 'D) Thin teeth'], answer: 'B' },
+              { id: '6-16', text: 'The shoulder margin width for all-ceramic crowns should be:', options: ['A) 0.5 mm', 'B) 1.0 - 1.5 mm', 'C) 2.0 - 2.5 mm', 'D) 0.1 mm'], answer: 'B' },
+              { id: '6-17', text: 'Instrument for lingual concavity reduction:', options: ['A) Needle diamond', 'B) Small wheel diamond', 'C) Flat-end tapered diamond', 'D) Taper finishing bur'], answer: 'B' },
+              { id: '6-18', text: 'The tissue response to all-ceramic subgingival margins is:', options: ['A) Inflammatory', 'B) Good / Excellent', 'C) Poor', 'D) Unpredictable'], answer: 'B' },
+              { id: '6-19', text: 'Why must all internal line angles be rounded?', options: ['A) Cheaper lab', 'B) Ceramics are brittle and sharp angles act as "stress raisers"', 'C) Cement thickness', 'D) Sensitivity'], answer: 'B' },
+              { id: '6-20', text: 'All-ceramic crowns have ______ thermal conductivity.', options: ['A) High', 'B) Low', 'C) Medium', 'D) Very high'], answer: 'B' },
+              { id: '6-21', text: 'Contraindication for all-ceramic crowns:', options: ['A) Rotated teeth', 'B) Thin teeth faciolingually', 'C) Malformed teeth', 'D) Peg laterals'], answer: 'B' },
+              { id: '6-22', text: 'The modified biangle chisel is used for:', options: ['A) Incisal reduction', 'B) Shoulder finishing', 'C) Lingual concavity', 'D) Proximal reduction'], answer: 'B' },
+              { id: '6-23', text: 'Proper preparation design ensures:', options: ['A) Mechanical success', 'B) Low cost', 'C) Fast cement setting', 'D) Metal display'], answer: 'A' },
+              { id: '6-24', text: 'Half-moon fracture due to deep bite occurs at:', options: ['A) Incisal edge', 'B) Lingual surface cervical fifth', 'C) Facial surface', 'D) Contact point'], answer: 'B' },
+              { id: '6-25', text: 'Depth-orientation grooves ensure:', options: ['A) Higher retention', 'B) Uniform and adequate reduction', 'C) Color match', 'D) Comfort'], answer: 'B' },
+              { id: '6-26', text: 'Material indicated where high esthetics exist:', options: ['A) Full gold', 'B) All-ceramic', 'C) Amalgam', 'D) Stainless steel'], answer: 'B' },
+              { id: '6-27', text: 'All-ceramic crowns can be used as:', options: ['A) Individual only', 'B) Individual or bridge retainers', 'C) Removable dentures', 'D) Filling'], answer: 'B' },
+              { id: '6-28', text: 'Younger patients with large vital pulp are contraindicated due to:', options: ['A) Fracture', 'B) Pulp exposure', 'C) Color change', 'D) Recession'], answer: 'B' },
+              { id: '6-29', text: 'Outcome of preparing labial surface in single plane:', options: ['A) High retention', 'B) Protrusion, opacity at incisal third, or pulp exposure', 'C) Translucency', 'D) Faster prep'], answer: 'B' },
+              { id: '6-30', text: 'Axial finishing is performed with:', options: ['A) Small wheel diamond', 'B) Taper finishing bur no. 171', 'C) Needle diamond', 'D) Large round bur'], answer: 'B' },
+              { id: '6-31', text: 'Translucency in all-ceramic crowns is:', options: ['A) Poor', 'B) Excellent', 'C) Average', 'D) Non-existent'], answer: 'B' },
+              { id: '6-32', text: 'Malformed teeth due to development defects are ______ for all-ceramic.', options: ['A) Contraindications', 'B) Indications', 'C) Impossible', 'D) Gold only'], answer: 'B' },
+              { id: '6-33', text: 'The proximal reduction for all-ceramic crowns is:', options: ['A) Less conservative than PFM', 'B) More conservative than PFM', 'C) Same as PFM', 'D) Not required'], answer: 'A' },
+              { id: '6-34', text: 'Small wheel diamond is primarily for:', options: ['A) Shoulder finishing', 'B) Lingual reduction (occlusion)', 'C) Incisal reduction', 'D) Beveling'], answer: 'B' },
+              { id: '6-35', text: 'The color stability of all-ceramic crowns is:', options: ['A) Low', 'B) High', 'C) Moderate', 'D) Poor'], answer: 'B' },
+              { id: '6-36', text: 'Bruxism is a condition where all-ceramic crowns are:', options: ['A) Recommended', 'B) Contraindicated', 'C) Best choice', 'D) Used without caution'], answer: 'B' },
+              { id: '6-37', text: 'The end-cutting bur is used for:', options: ['A) Axial reduction', 'B) Shoulder finishing', 'C) Incisal reduction', 'D) Lingual concavity'], answer: 'B' },
+              { id: '6-38', text: 'All-ceramic crowns used when ______ can no longer restore tooth.', options: ['A) Gold', 'B) Composite resin', 'C) Amalgam', 'D) Temporary filling'], answer: 'B' },
+              { id: '6-39', text: 'Why is "Edge-to-edge" relationship a problem for all-ceramic?', options: ['A) Cement dissolves', 'B) Heavy loading at thinnest ceramic part leads to fracture', 'C) Too white', 'D) High retention'], answer: 'B' },
+              { id: '6-40', text: 'Clinical benefit of "Rounded internal angle" of shoulder:', options: ['A) Rotation', 'B) Better flow of ceramic and reduced stress concentration', 'C) Less sensitive', 'D) Shade choice'], answer: 'B' }
+            ]
+          },
+          {
+            id: 'q7',
+            title: 'Fabrication Flow',
+            description: 'Lecture 7: Mastery of laboratory steps, porcelain firing, and sintering techniques.',
+            icon: '🧪',
+            isExternal: false,
+            questions: [
+              { id: '7-1', text: 'The first all-ceramic crown (1886) was known as:', options: ['A) Metal-Ceramic Crown', 'B) Porcelain Jacket Crown (PJC)', 'C) Zirconia Crown', 'D) IPS e.max'], answer: 'B' },
+              { id: '7-2', text: 'The primary component of conventional dental porcelain is:', options: ['A) Alumina', 'B) Feldspar', 'C) Quartz', 'D) Kaolin'], answer: 'B' },
+              { id: '7-3', text: 'Which component acts as a binder and provides workability?', options: ['A) Quartz', 'B) Kaolin (Clay)', 'C) Feldspar', 'D) Pigments'], answer: 'B' },
+              { id: '7-4', text: 'Quartz in porcelain serves as a:', options: ['A) Glass former', 'B) Strengthening filler', 'C) Color additive', 'D) Flux'], answer: 'B' },
+              { id: '7-5', text: '"Annealing" the platinum foil is done to:', options: ['A) Change its color', 'B) Relieve work hardening and allow better adaptation', 'C) Make it melt', 'D) Clean it'], answer: 'B' },
+              { id: '7-6', text: 'The process of powder particles fusing to form a continuous mass is:', options: ['A) Glazing', 'B) Sintering', 'C) Compaction', 'D) Annealing'], answer: 'B' },
+              { id: '7-7', text: 'Maximum shrinkage during firing occurs in which stage?', options: ['A) Low bisque', 'B) Medium bisque', 'C) High bisque', 'D) Glazing'], answer: 'B' },
+              { id: '7-8', text: 'Which stage results in a smooth and shiny surface?', options: ['A) Low bisque', 'B) High bisque', 'C) Medium bisque', 'D) Compaction'], answer: 'B' },
+              { id: '7-9', text: 'Why does porcelain mass shrink significantly during sintering?', options: ['A) expansion', 'B) Elimination of air spaces between particles as they fuse', 'C) foil shrinkage', 'D) water addition'], answer: 'B' },
+              { id: '7-10', text: 'Self-glazing is preferred over add-on glazing because it is:', options: ['A) More colorful', 'B) More resistant to oral fluids', 'C) Faster', 'D) Cheaper'], answer: 'B' },
+              { id: '7-11', text: 'IPS e.max Press objects are visible after:', options: ['A) Compaction', 'B) Rough divesting', 'C) Sintering', 'D) Glazing'], answer: 'B' },
+              { id: '7-12', text: 'The pressure used for fine divesting of e.max objects is:', options: ['A) 4 bar', 'B) 2 bar', 'C) 10 bar', 'D) 0 bar'], answer: 'B' },
+              { id: '7-13', text: 'Machinable ceramics are used with:', options: ['A) Platinum matrix', 'B) CAD/CAM technology', 'C) Slip casting', 'D) Hand layering'], answer: 'B' },
+              { id: '7-14', text: 'In PJC fabrication, the "Timer\'s Joint" is used for:', options: ['A) Mixing porcelain', 'B) Platinum matrix formation', 'C) Polishing', 'D) Sintering'], answer: 'B' },
+              { id: '7-15', text: 'Condensation by vibration helps to:', options: ['A) Add water', 'B) Pack particles and remove excess water', 'C) Change shade', 'D) Increase temp'], answer: 'B' },
+              { id: '7-16', text: '"Devitrification" is a defect where porcelain becomes:', options: ['A) Transparent', 'B) Milky due to unwanted crystallization', 'C) Strong', 'D) Liquid'], answer: 'B' },
+              { id: '7-17', text: 'Slip-cast ceramics involve casting on a:', options: ['A) Metal die', 'B) Refractory die', 'C) Wax pattern', 'D) Plastic die'], answer: 'B' },
+              { id: '7-18', text: 'Traditional porcelain is a vitreous ceramic based on:', options: ['A) Metal network', 'B) Silica network and feldspar', 'C) Resin network', 'D) Carbon network'], answer: 'B' },
+              { id: '7-19', text: 'Why is "Platinum foil" used as a matrix for PJC?', options: ['A) Silver color', 'B) Stable base that withstands high firing temperatures', 'C) Cheaper', 'D) Prevents shrinking'], answer: 'B' },
+              { id: '7-20', text: 'Which condensation method uses capillary attraction?', options: ['A) Vibration', 'B) Brushing with dry powder addition', 'C) Spatulation', 'D) Whipping'], answer: 'B' },
+              { id: '7-21', text: 'High-strength ceramics like Leucite-based systems are:', options: ['A) Slip-cast', 'B) Heat-pressed', 'C) Hand-layered', 'D) Metal-based'], answer: 'B' },
+              { id: '7-22', text: 'The ternary composition of porcelain includes Feldspar, Quartz, and:', options: ['A) Zirconia', 'B) Clay', 'C) Gold', 'D) Silver'], answer: 'B' },
+              { id: '7-23', text: 'Rough divesting uses polishing beads at:', options: ['A) 1 bar', 'B) 4 bar', 'C) 8 bar', 'D) 12 bar'], answer: 'B' },
+              { id: '7-24', text: 'The breaking point of the investment ring should be at least ____ from bottom:', options: ['A) 5 mm', 'B) 30 mm', 'C) 100 mm', 'D) 1 mm'], answer: 'B' },
+              { id: '7-25', text: 'Feldspar is chemically known as:', options: ['A) Calcium carbonate', 'B) Anhydrous potassium alumino silicate', 'C) Sodium chloride', 'D) Magnesium oxide'], answer: 'B' },
+              { id: '7-26', text: 'Stages of firing include low, medium, and high:', options: ['A) Heat', 'B) Bisque firing', 'C) Glaze', 'D) Cooling'], answer: 'B' },
+              { id: '7-27', text: 'Glazing produces a surface that is:', options: ['A) Porous', 'B) Impervious and smooth', 'C) Soft', 'D) Rough'], answer: 'B' },
+              { id: '7-28', text: 'In PJC, compaction is done to:', options: ['A) Increase water', 'B) Achieve high density and reduce shrinkage', 'C) transparency', 'D) firing speed'], answer: 'B' },
+              { id: '7-29', text: 'How does condensation (vibration) improve the final result?', options: ['A) Chemical change', 'B) Reduces shrinkage and increases strength by packing particles', 'C) Sets faster', 'D) Non-stick'], answer: 'B' },
+              { id: '7-30', text: 'Low bisque firing results in:', options: ['A) Fusion', 'B) Loss of water', 'C) Smoothness', 'D) Glazing'], answer: 'B' },
+              { id: '7-31', text: 'Vitreous ceramics are:', options: ['A) Crystalline', 'B) Glass-based', 'C) Metal-based', 'D) Organic'], answer: 'B' },
+              { id: '7-32', text: 'Modern high-strength ceramics developed to overcome:', options: ['A) Esthetics', 'B) Low strength/toughness of PJC', 'C) High cost', 'D) Wear'], answer: 'B' },
+              { id: '7-33', text: 'Refractory dies are used in:', options: ['A) Heat-pressing', 'B) Slip-casting', 'C) CAD/CAM', 'D) Foil sintering'], answer: 'B' },
+              { id: '7-34', text: 'Kaolin is a ______ alumino silicate:', options: ['A) Anhydrous', 'B) Hydrated', 'C) Metallic', 'D) Liquid'], answer: 'B' },
+              { id: '7-35', text: 'The matrix is adapted to the die using:', options: ['A) Sticky wax', 'B) Wooden point and beaver-tail burnisher', 'C) Pliers', 'D) High heat'], answer: 'B' },
+              { id: '7-36', text: 'Machinable ceramics example codes are:', options: ['A) P1, P2', 'B) C1, A1C', 'C) Z1, Z2', 'D) M1, M2'], answer: 'B' },
+              { id: '7-37', text: 'Glazing by adding low-fusing glass is done when:', options: ['A) Self-glazing is not possible', 'B) Strength is needed', 'C) Crown too big', 'D) Color wrong'], answer: 'A' },
+              { id: '7-38', text: 'Feldspar, Quartz, and Clay are parts of the ______ composition:', options: ['A) Binary', 'B) Ternary', 'C) Quaternary', 'D) Single'], answer: 'B' },
+              { id: '7-39', text: 'Clinical significance of a "Glazed" surface on ceramic:', options: ['A) Taste', 'B) Resists plaque and prevents wear of opposing teeth', 'C) Cementing', 'D) Retention'], answer: 'B' },
+              { id: '7-40', text: 'Why must "Shrinkage" be calculated precisely?', options: ['A) Material cost', 'B) Crown shrinks 20-30%; without compensation it won\'t fit', 'C) Firing speed', 'D) Oven protection'], answer: 'B' }
+            ]
+          },
+          {
+            id: 'q8',
+            title: 'PFM Principles',
+            description: 'Lecture 8: Porcelain-Fused-to-Metal mastery, framework design, and durability.',
+            icon: '🔱',
+            isExternal: false,
+            questions: [
+              { id: '8-1', text: 'A metal-ceramic crown is also known as:', options: ['A) All-porcelain crown', 'B) Porcelain Fused to Metal (PFM)', 'C) Gold crown', 'D) Veneer'], answer: 'B' },
+              { id: '8-2', text: 'The structure of PFM consists of a ceramic layer bonded to a:', options: ['A) Plastic coping', 'B) Thin cast metal coping', 'C) Thick gold block', 'D) Dentin layer'], answer: 'B' },
+              { id: '8-3', text: 'What is a major advantage of PFM over all-ceramic crowns?', options: ['A) Translucency', 'B) Higher strength due to metal substructure', 'C) Less reduction', 'D) Shade matching'], answer: 'B' },
+              { id: '8-4', text: 'The facial reduction for an anterior PFM crown should be:', options: ['A) 0.5 mm', 'B) 1.2 mm', 'C) 2.0 mm', 'D) 0.1 mm'], answer: 'B' },
+              { id: '8-5', text: 'Insufficient facial reduction in PFM leads to:', options: ['A) Better aesthetics', 'B) Poor contour and shade mismatch (opaque)', 'C) Pulp health', 'D) Easier lab'], answer: 'B' },
+              { id: '8-6', text: 'The facial reduction should be prepared in how many planes?', options: ['A) One plane', 'B) Two planes', 'C) Three planes', 'D) Four planes'], answer: 'B' },
+              { id: '8-7', text: 'The "Silicone Index" is used for:', options: ['A) Final impression', 'B) Verifying amount of reduction', 'C) Cementing', 'D) Cleaning'], answer: 'B' },
+              { id: '8-8', text: 'Incisal reduction for a metal-ceramic crown is:', options: ['A) 1.0 mm', 'B) 2.0 mm', 'C) 0.5 mm', 'D) 3.0 mm'], answer: 'B' },
+              { id: '8-9', text: 'Why is the facial reduction of PFM prepared in two planes?', options: ['A) Speed', 'B) To follow anatomy, ensuring space without compromising pulp', 'C) Increase taper', 'D) Make metal thicker'], answer: 'B' },
+              { id: '8-10', text: 'Lingual concavity reduction is performed with:', options: ['A) Needle diamond', 'B) Small wheel diamond', 'C) Flat-end tapered diamond', 'D) Round bur'], answer: 'B' },
+              { id: '8-11', text: 'The "Wing" in PFM preparation provides:', options: ['A) Aesthetics only', 'B) Retention, resistance, and preservation', 'C) Biting place', 'D) Better color'], answer: 'B' },
+              { id: '8-12', text: 'Which margin is used when gingival aesthetics are not critical?', options: ['A) All-ceramic labial', 'B) Shoulder with bevel', 'C) Knife edge', 'D) Feather edge'], answer: 'B' },
+              { id: '8-13', text: 'A "Deep Chamfer" margin has a cavosurface angle of:', options: ['A) 45 degrees', 'B) 90 degrees', 'C) 120 degrees', 'D) 10 degrees'], answer: 'B' },
+              { id: '8-14', text: 'Tool used to "break the contact" in proximal reduction:', options: ['A) Wheel diamond', 'B) Long needle diamond', 'C) Chisel', 'D) Round bur'], answer: 'B' },
+              { id: '8-15', text: 'Functional cusp bevel in posterior PFM ensures:', options: ['A) Fit', 'B) Structural durability (adequate bulk)', 'C) Retention', 'D) Less metal'], answer: 'B' },
+              { id: '8-16', text: 'Smoothing sharp angles is necessary to:', options: ['A) Aesthetics', 'B) Prevent stress points that cause fracture', 'C) Less reduction', 'D) Faster cement'], answer: 'B' },
+              { id: '8-17', text: 'Occlusal reduction in posterior teeth should follow:', options: ['A) Flat plane', 'B) Occlusal anatomy (Planar)', 'C) Gum line', 'D) Tongue level'], answer: 'B' },
+              { id: '8-18', text: 'Radial fissure burs are used for:', options: ['A) Incisal reduction', 'B) Rounded shoulder margin', 'C) Beveling', 'D) Breaking contact'], answer: 'B' },
+              { id: '8-19', text: 'Clinical result of a "single-plane" facial reduction that is too upright:', options: ['A) High retention', 'B) Protrusion, poor aesthetics, and gingival irritation', 'C) Pulp exposure', 'D) Metal bond'], answer: 'B' },
+              { id: '8-20', text: 'Gingival bevel helps achieve:', options: ['A) Aesthetics', 'B) Marginal integrity', 'C) Taper', 'D) Strength'], answer: 'B' },
+              { id: '8-21', text: 'The lingual axial reduction for PFM is usually:', options: ['A) 1.2 mm', 'B) 0.7 - 1.0 mm', 'C) 2.0 mm', 'D) 0.1 mm'], answer: 'B' },
+              { id: '8-22', text: 'The "All-ceramic labial margin" is used to:', options: ['A) Strength', 'B) Improve aesthetics by eliminating metal collar', 'C) Reduce cost', 'D) Lab speed'], answer: 'B' },
+              { id: '8-23', text: 'Instrument for gingival half of labial reduction:', options: ['A) Small wheel diamond', 'B) Round-end tapered diamond', 'C) Needle diamond', 'D) Chisel'], answer: 'B' },
+              { id: '8-24', text: 'Planar occlusal reduction is for:', options: ['A) Retention', 'B) Structural durability', 'C) Fit', 'D) Marginal integrity'], answer: 'B' },
+              { id: '8-25', text: '"Depth Orientation Grooves" are used in:', options: ['A) Anterior only', 'B) Posterior only', 'C) Both anterior and posterior', 'D) Neither'], answer: 'C' },
+              { id: '8-26', text: 'PFM is versatile because it can be used for:', options: ['A) Temporary only', 'B) Single crowns and FPDs', 'C) Fillings only', 'D) Ortho'], answer: 'B' },
+              { id: '8-27', text: 'A "Radial Shoulder" is a:', options: ['A) Beveled margin', 'B) Modified shoulder with small radius and 90° cavosurface', 'C) Sharp 45° angle', 'D) Knife edge'], answer: 'B' },
+              { id: '8-28', text: 'In posterior teeth, the facial reduction is divided into:', options: ['A) One plane', 'B) Occlusal and Gingival halves', 'C) Vertical sections', 'D) Mesial and distal'], answer: 'B' },
+              { id: '8-29', text: 'Why prefer "Chamfer" or "Shoulder with Bevel" for metal margins?', options: ['A) Looks longer', 'B) Thin, sharp edge of metal can be accurately cast and finished', 'C) More porcelain', 'D) Cleanliness'], answer: 'B' },
+              { id: '8-30', text: 'Modified binangle chisel is used for:', options: ['A) Breaking contact', 'B) Margin finishing', 'C) Occlusal reduction', 'D) Drilling holes'], answer: 'B' },
+              { id: '8-31', text: 'Proximal wings are present where:', options: ['A) Small tooth', 'B) Deep reduction transitions to shallow reduction', 'C) All-metal crown', 'D) No porcelain'], answer: 'B' },
+              { id: '8-32', text: 'The silicone index is made:', options: ['A) After prep', 'B) Before prep', 'C) During cementation', 'D) By lab only'], answer: 'B' },
+              { id: '8-33', text: 'Adequate reduction is critical for:', options: ['A) Comfort only', 'B) Aesthetics and gingival health', 'C) Lowering cost', 'D) Fast prep'], answer: 'B' },
+              { id: '8-34', text: 'Chamfer provides:', options: ['A) Structural durability and marginal integrity', 'B) Aesthetics only', 'C) Translucency', 'D) Pulp protection'], answer: 'A' },
+              { id: '8-35', text: 'Lab knife with No. 25 blade is used for:', options: ['A) Cutting tooth', 'B) Trimming silicone putty', 'C) Finishing margin', 'D) Polishing'], answer: 'B' },
+              { id: '8-36', text: 'Facial axial reduction contributes to:', options: ['A) Retention and resistance', 'B) Structural durability', 'C) Aesthetics', 'D) All of the above'], answer: 'D' },
+              { id: '8-37', text: 'For posterior crowns, occlusal reduction is followed by:', options: ['A) Polishing', 'B) Functional cusp bevel', 'C) Cementation', 'D) Impression'], answer: 'B' },
+              { id: '8-38', text: 'Shoulder margin is for:', options: ['A) Retention', 'B) Marginal integrity', 'C) Translucency', 'D) Taper'], answer: 'B' },
+              { id: '8-39', text: 'What happens if incisal reduction is 1.0 mm instead of 2.0 mm?', options: ['A) Stronger tooth', 'B) Porcelain too thin, leading to fracture or opaque edge', 'C) Better fit', 'D) Fast cement'], answer: 'B' },
+              { id: '8-40', text: 'Why is "Planar" occlusal reduction better than "Flat"?', options: ['A) Faster', 'B) Maintains uniform space while preserving structure', 'C) Heavier crown', 'D) More surface area'], answer: 'B' }
+            ]
+          }
+        ];
 
-    <!-- Features Section -->
-    <section class="features">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Why Choose Our Platform</h2>
-                <p class="section-subtitle">Professional features designed for optimal learning experience</p>
-            </div>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h3 class="feature-title">Offline Access</h3>
-                    <p class="feature-desc">All quizzes available without internet connection. Study anywhere, anytime.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <h3 class="feature-title">Professional Content</h3>
-                    <p class="feature-desc">High-quality questions created by dental education specialists.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3 class="feature-title">Progress Tracking</h3>
-                    <p class="feature-desc">Monitor your performance and identify areas for improvement.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Responsive Design</h3>
-                    <p class="feature-desc">Optimized for all devices - desktop, tablet, and mobile.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        // --- APP COMPONENT ---
+        const App = () => {
+          const [view, setView] = useState('home');
+          const [activeQuiz, setActiveQuiz] = useState(null);
+          const [currentIndex, setCurrentIndex] = useState(0);
+          
+          const [score, setScore] = useState(0);
+          const [xp, setXp] = useState(() => {
+            try {
+              return Number(localStorage.getItem('dental_xp')) || 0;
+            } catch {
+              return 0;
+            }
+          });
+          const [streak, setStreak] = useState(0);
+          const [maxStreak, setMaxStreak] = useState(0);
+          
+          const [powerUps, setPowerUps] = useState({ hints: 3, freezes: 2 });
+          const [isFrozen, setIsFrozen] = useState(false);
+          const [eliminatedIndices, setEliminatedIndices] = useState([]);
+          const [timeLeft, setTimeLeft] = useState(30);
+          const timerRef = useRef(null);
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="footer-logo">
-                        <i class="fas fa-tooth"></i>
-                        <span>Fixed Prosthodontics</span>
-                    </div>
-                    <p class="footer-desc">Professional offline quiz platform for dental education.</p>
-                </div>
-                
-                <div class="footer-links">
-                    <h4 class="footer-title">Quick Links</h4>
-                    <a href="index.html" class="footer-link">Home</a>
-                    <a href="#quizzes" class="footer-link">All Quizzes</a>
-                </div>
-                
-                <div class="footer-info">
-                    <h4 class="footer-title">Information</h4>
-                    <p class="footer-text"><i class="fas fa-code"></i> Developed by <strong>The Boss</strong></p>
-                    <p class="footer-text"><i class="fas fa-brain"></i> AI-Generated Questions</p>
-                    <div class="prayer-box">
-                        <i class="fas fa-hands-praying"></i>
-                        <span>Pray for The Boss</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p class="copyright">&copy; 2023 Fixed Prosthodontics Quizzes. All rights reserved.</p>
-                <p class="signature">Professionally crafted for dental education excellence</p>
-            </div>
-        </div>
-    </footer>
+          const [feedback, setFeedback] = useState(null);
+          const [xpGain, setXpGain] = useState(null);
+          const [typedMessage, setTypedMessage] = useState('');
+          const [messageToast, setMessageToast] = useState(null);
+          const [showBoss, setShowBoss] = useState(false);
+          
+          const welcomeText = "جميع الاسئله تم انشائها بواسطه الذكاء الاصطناعي... ماتنسوش تدعوا ل ";
 
-    <script src="script.js"></script>
+          useEffect(() => {
+            let i = 0;
+            const interval = setInterval(() => {
+              setTypedMessage(welcomeText.slice(0, i));
+              i++;
+              if (i > welcomeText.length) {
+                clearInterval(interval);
+                setShowBoss(true);
+              }
+            }, 50);
+            return () => clearInterval(interval);
+          }, []);
+
+          useEffect(() => {
+            try { localStorage.setItem('dental_xp', xp.toString()); } catch (e) {}
+          }, [xp]);
+
+          useEffect(() => {
+            if (view === 'quiz' && !isFrozen && feedback === null) {
+              timerRef.current = window.setInterval(() => {
+                setTimeLeft((prev) => {
+                  if (prev <= 1) {
+                    handleTimeOut();
+                    return 30;
+                  }
+                  return prev - 1;
+                });
+              }, 1000);
+            } else {
+              if (timerRef.current) clearInterval(timerRef.current);
+            }
+            return () => { if (timerRef.current) clearInterval(timerRef.current); };
+          }, [view, currentIndex, isFrozen, feedback]);
+
+          const handleTimeOut = () => {
+            setFeedback('wrong');
+            setStreak(0);
+            setMessageToast("Time's up! ⏳");
+            setTimeout(() => {
+              setMessageToast(null);
+              setFeedback(null);
+              nextQuestion();
+            }, 1500);
+          };
+
+          const handleStartQuiz = (quiz) => {
+            if (quiz.isExternal) {
+              window.open(quiz.link, '_blank');
+              return;
+            }
+            setActiveQuiz(quiz);
+            setCurrentIndex(0);
+            setScore(0);
+            setStreak(0);
+            setTimeLeft(30);
+            setFeedback(null);
+            setEliminatedIndices([]);
+            setView('quiz');
+          };
+
+          const handleSelectAnswer = (optionLetter) => {
+            if (feedback) return;
+            const correct = activeQuiz?.questions?.[currentIndex].answer === optionLetter;
+
+            if (correct) {
+              setFeedback('correct');
+              setScore((s) => s + 1);
+              const newStreak = streak + 1;
+              setStreak(newStreak);
+              setMaxStreak(Math.max(maxStreak, newStreak));
+              const gain = 20 + (newStreak * 5);
+              setXpGain(gain);
+              setXp((prev) => prev + gain);
+              if (newStreak >= 3) setMessageToast(`🔥 Streak ${newStreak}! UNSTOPPABLE!`);
+              else setMessageToast("Bravo! Keep going! 💪");
+
+              confetti({
+                particleCount: 150,
+                spread: 80,
+                origin: { y: 0.7 },
+                colors: ['#22c55e', '#3b82f6', '#ffffff']
+              });
+            } else {
+              setFeedback('wrong');
+              setStreak(0);
+              setMessageToast("Wrong choice, but don't give up! 😉");
+            }
+            setTimeout(() => {
+              setFeedback(null);
+              setXpGain(null);
+              setMessageToast(null);
+              nextQuestion();
+            }, 1500);
+          };
+
+          const nextQuestion = () => {
+            if (!activeQuiz?.questions) return;
+            if (currentIndex < activeQuiz.questions.length - 1) {
+              setCurrentIndex((c) => c + 1);
+              setTimeLeft(30);
+              setIsFrozen(false);
+              setEliminatedIndices([]);
+            } else { setView('result'); }
+          };
+
+          const use5050 = () => {
+            if (powerUps.hints <= 0 || feedback || eliminatedIndices.length > 0) return;
+            const correctLetter = activeQuiz?.questions?.[currentIndex].answer;
+            const options = ['A', 'B', 'C', 'D'];
+            const wrongOnes = options.filter(o => o !== correctLetter);
+            const toEliminate = wrongOnes.sort(() => 0.5 - Math.random()).slice(0, 2);
+            setEliminatedIndices(toEliminate.map(letter => options.indexOf(letter)));
+            setPowerUps(p => ({ ...p, hints: p.hints - 1 }));
+          };
+
+          const useFreeze = () => {
+            if (powerUps.freezes <= 0 || feedback || isFrozen) return;
+            setIsFrozen(true);
+            setPowerUps(p => ({ ...p, freezes: p.freezes - 1 }));
+          };
+
+          const currentLevel = Math.floor(xp / 1000) + 1;
+          const progressToNextLevel = ((xp % 1000) / 1000) * 100;
+
+          return React.createElement('div', { className: "min-h-screen flex flex-col bg-[#F8FAFC] transition-colors duration-500 overflow-x-hidden" },
+            React.createElement('header', { className: "bg-white/95 backdrop-blur-md border-b-2 border-blue-100 sticky top-0 z-50 shadow-md h-20" },
+              React.createElement('div', { className: "max-w-7xl mx-auto px-4 h-full flex items-center justify-between" },
+                React.createElement('div', { className: "flex items-center space-x-4 cursor-pointer group", onClick: () => setView('home') },
+                  React.createElement('div', { className: "w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200 group-hover:rotate-12 transition-all" }, React.createElement(Stethoscope, { className: "w-7 h-7" })),
+                  React.createElement('div', null,
+                    React.createElement('h1', { className: "text-xl font-black text-slate-900 tracking-tighter uppercase leading-none" }, "PROSTH ", React.createElement('span', { className: "text-blue-600" }, "MASTERY")),
+                    React.createElement('p', { className: "text-[10px] text-blue-500 font-bold uppercase tracking-widest mt-1" }, `Academy Rank: ${currentLevel}`)
+                  )
+                ),
+                React.createElement('div', { className: "flex items-center space-x-8" },
+                  React.createElement('div', { className: "hidden lg:flex flex-col items-end" },
+                    React.createElement('div', { className: "flex items-center space-x-2 mb-1" }, React.createElement(Zap, { className: "w-4 h-4 text-blue-500" }), React.createElement('span', { className: "text-[10px] font-black text-slate-400" }, "XP PROGRESS")),
+                    React.createElement('div', { className: "w-40 h-3 bg-slate-100 rounded-full border border-blue-50 overflow-hidden shadow-inner" },
+                      React.createElement('div', { className: "h-full bg-blue-600 transition-all duration-1000", style: { width: `${progressToNextLevel}%` } })
+                    )
+                  ),
+                  React.createElement('div', { className: "flex items-center space-x-3 bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100" },
+                    React.createElement(Flame, { className: `w-6 h-6 ${streak > 2 ? 'text-orange-500 animate-bounce' : 'text-slate-200'}` }),
+                    React.createElement('span', { className: "text-xl font-black text-slate-800" }, streak)
+                  )
+                )
+              )
+            ),
+            React.createElement('main', { className: "flex-grow max-w-7xl mx-auto w-full px-4 py-8 md:py-12" },
+              view === 'home' && React.createElement('div', { className: "space-y-12 animate-in fade-in zoom-in duration-700" },
+                React.createElement('div', { className: "relative overflow-hidden bg-white rounded-[3rem] p-8 md:p-16 border-4 border-white shadow-xl" },
+                  React.createElement('div', { className: "absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-blue-50/50 to-transparent -skew-x-12 pointer-events-none" }),
+                  React.createElement('div', { className: "relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center" },
+                    React.createElement('div', { className: "space-y-8" },
+                      React.createElement('div', { className: "inline-flex items-center space-x-3 px-5 py-2.5 bg-blue-950 text-white rounded-full text-xs font-black uppercase tracking-[0.2em] shadow-xl" }, React.createElement(Volume2, { className: "w-4 h-4 animate-pulse" }), React.createElement('span', null, "Academic Simulation Engine")),
+                      React.createElement('h2', { className: "text-6xl md:text-7xl font-black text-slate-900 tracking-tighter leading-[0.85]" }, "Master the ", React.createElement('br'), React.createElement('span', { className: "text-blue-600 italic" }, "Preparation.")),
+                      React.createElement('p', { className: "text-slate-500 text-lg md:text-xl font-medium leading-relaxed max-w-md" }, "Advanced clinical drills in Fixed Prosthodontics. Train your eyes, test your knowledge, and earn your Boss status."),
+                      React.createElement('div', { className: "pt-6" },
+                        React.createElement('div', { className: "flex items-start space-x-5" },
+                          React.createElement('div', { className: "w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0" }, React.createElement(Ghost, { className: "w-7 h-7 animate-bounce" })),
+                          React.createElement('div', { className: "bg-[#F1F5F9] border-2 border-white p-6 rounded-3xl rounded-tl-none shadow-xl max-w-md" },
+                            React.createElement('p', { className: "arabic-text text-blue-900 font-bold text-xl md:text-2xl leading-relaxed text-right" }, 
+                              typedMessage,
+                              showBoss && React.createElement('span', { className: "block mt-2 text-5xl font-black tracking-tighter text-blue-600 underline decoration-blue-100 underline-offset-8" }, "Boss")
+                            )
+                          )
+                        )
+                      )
+                    ),
+                    React.createElement('div', { className: "grid grid-cols-2 gap-6" },
+                      [{ label: 'YOUR XP', val: xp, icon: Zap, color: 'text-blue-500' }, { label: 'RANK', val: currentLevel, icon: Star, color: 'text-yellow-500' }, { label: 'STREAK', val: maxStreak, icon: Flame, color: 'text-orange-500' }, { label: 'MODULES', val: '8/8', icon: Award, color: 'text-purple-500' }].map((stat, i) =>
+                        React.createElement('div', { key: i, className: "bg-slate-50 p-8 rounded-[2.5rem] border-2 border-white shadow-inner flex flex-col items-center group hover:bg-white hover:shadow-2xl hover:scale-105 transition-all duration-500" },
+                          React.createElement('div', { className: "p-3 bg-white rounded-2xl shadow-sm mb-4 transition-transform group-hover:rotate-12" }, React.createElement(stat.icon, { className: `w-8 h-8 ${stat.color}` })),
+                          React.createElement('span', { className: "text-3xl font-black text-slate-800 tracking-tight" }, stat.val),
+                          React.createElement('span', { className: "text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2" }, stat.label)
+                        )
+                      )
+                    )
+                  )
+                ),
+                React.createElement('div', { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" },
+                  QUIZZES.map((quiz) =>
+                    React.createElement('div', { key: quiz.id, className: "group bg-white rounded-[2.5rem] p-10 border-2 border-transparent hover:border-blue-400 hover:shadow-2xl transition-all duration-500 cursor-pointer flex flex-col relative overflow-hidden transform hover:-translate-y-4", onClick: () => handleStartQuiz(quiz) },
+                      React.createElement('div', { className: "w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center text-4xl mb-8 group-hover:bg-blue-600 group-hover:text-white transition-all group-hover:rotate-6" }, quiz.icon),
+                      React.createElement('h3', { className: "text-2xl font-black text-slate-800 mb-3 group-hover:text-blue-600 transition-colors leading-tight" }, quiz.title),
+                      React.createElement('p', { className: "text-sm text-slate-400 flex-grow font-semibold leading-relaxed mb-10" }, quiz.description),
+                      React.createElement('div', { className: "flex items-center justify-between border-t border-slate-50 pt-6" },
+                        React.createElement('span', { className: "text-[10px] font-black text-blue-600 tracking-[0.2em] uppercase" }, quiz.isExternal ? 'OPEN PORTAL' : 'BEGIN DRILL'),
+                        React.createElement('div', { className: "w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all" }, React.createElement(ChevronRight, { className: "w-6 h-6" }))
+                      )
+                    )
+                  )
+                )
+              ),
+              view === 'quiz' && activeQuiz?.questions && React.createElement('div', { className: "max-w-4xl mx-auto animate-in slide-in-from-bottom duration-500" },
+                React.createElement('div', { className: "mb-8 flex flex-col md:flex-row items-center justify-between gap-6" },
+                  React.createElement('button', { onClick: () => setView('home'), className: "px-8 py-4 bg-white text-slate-900 rounded-2xl font-black hover:bg-slate-50 border-2 border-slate-100 shadow-sm transition-all flex items-center group" }, React.createElement(ArrowLeft, { className: "w-5 h-5 mr-3 group-hover:-translate-x-1" }), "TERMINATE"),
+                  React.createElement('div', { className: "flex items-center space-x-4" },
+                    React.createElement('button', { onClick: use5050, disabled: powerUps.hints === 0 || feedback !== null || eliminatedIndices.length > 0, className: "flex items-center space-x-3 px-6 py-4 rounded-2xl font-black text-sm border-2 transition-all shadow-sm bg-blue-50 border-blue-200 text-blue-700 hover:scale-105" }, React.createElement(Brain, { className: "w-5 h-5" }), React.createElement('span', null, `50/50 (${powerUps.hints})`)),
+                    React.createElement('button', { onClick: useFreeze, disabled: powerUps.freezes === 0 || feedback !== null || isFrozen, className: "flex items-center space-x-3 px-6 py-4 rounded-2xl font-black text-sm border-2 transition-all shadow-sm bg-cyan-50 border-cyan-200 text-cyan-700 hover:scale-105" }, React.createElement(Clock, { className: "w-5 h-5" }), React.createElement('span', null, `FREEZE (${powerUps.freezes})`))
+                  )
+                ),
+                React.createElement('div', { className: `relative bg-white rounded-[3.5rem] shadow-2xl border-4 transition-all duration-300 ${feedback === 'correct' ? 'border-green-400 correct-glow' : feedback === 'wrong' ? 'border-red-400 shake' : 'border-white'}` },
+                  messageToast && React.createElement('div', { className: "absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-900 text-white px-10 py-4 rounded-3xl font-black text-lg shadow-2xl z-30 animate-in slide-in-from-top-12" }, messageToast),
+                  React.createElement('div', { className: "h-3 w-full bg-slate-100 relative" },
+                    React.createElement('div', { className: `h-full transition-all duration-1000 ease-linear ${timeLeft < 10 ? 'fire-timer' : 'bg-blue-600'}`, style: { width: `${(timeLeft / 30) * 100}%` } }),
+                    isFrozen && React.createElement('div', { className: "absolute inset-0 bg-cyan-400/30 backdrop-blur-[1px] flex items-center justify-center font-black text-white text-xs" }, "System Frozen")
+                  ),
+                  React.createElement('div', { className: "p-10 md:p-16 relative" },
+                    xpGain && React.createElement('div', { className: "absolute top-6 right-6 text-4xl font-black text-green-500 xp-float" }, `+${xpGain} XP`),
+                    React.createElement('div', { className: "flex items-center space-x-4 mb-10" },
+                      React.createElement('div', { className: `w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg ${currentIndex >= activeQuiz.questions.length - 5 ? 'bg-red-600 text-white animate-pulse' : 'bg-blue-600 text-white'}` }, currentIndex >= activeQuiz.questions.length - 5 ? React.createElement(Skull, { className: "w-6 h-6" }) : React.createElement(Zap, { className: "w-6 h-6" })),
+                      React.createElement('div', { className: "flex flex-col" },
+                        React.createElement('span', { className: `text-[10px] font-black tracking-[0.2em] uppercase ${currentIndex >= activeQuiz.questions.length - 5 ? 'text-red-600' : 'text-blue-600'}` }, currentIndex >= activeQuiz.questions.length - 5 ? 'BOSS BATTLE: THE FINAL 5' : 'Clinical Simulation Phase'),
+                        React.createElement('span', { className: "text-slate-400 text-[10px] font-bold" }, `Module: ${activeQuiz.title}`)
+                      )
+                    ),
+                    React.createElement('h3', { className: "text-2xl md:text-3xl font-black text-slate-900 mb-12 tracking-tight leading-tight" }, activeQuiz.questions[currentIndex].text),
+                    React.createElement('div', { className: "grid grid-cols-1 gap-5" },
+                      activeQuiz.questions[currentIndex].options.map((option, idx) => {
+                        const letter = option.split(')')[0].trim().toUpperCase();
+                        const isEliminated = eliminatedIndices.includes(idx);
+                        const isUserCorrect = feedback === 'correct' && activeQuiz.questions[currentIndex].answer === letter;
+                        const isShownCorrect = feedback === 'wrong' && activeQuiz.questions[currentIndex].answer === letter;
+                        return React.createElement('button', { key: idx, disabled: feedback !== null || isEliminated, onClick: () => handleSelectAnswer(letter), className: `w-full text-left p-8 rounded-3xl border-4 transition-all duration-300 flex items-center group relative overflow-hidden ${isEliminated ? 'opacity-20 pointer-events-none scale-95' : isUserCorrect ? 'border-green-500 bg-green-50 scale-[1.02]' : isShownCorrect ? 'border-green-500 bg-green-50/50 border-dashed' : 'border-slate-50 bg-slate-50 hover:border-blue-600 active:scale-[0.98]'}` },
+                          React.createElement('div', { className: `w-14 h-14 rounded-2xl flex items-center justify-center mr-8 font-black text-2xl shadow-sm ${isUserCorrect ? 'bg-green-500 text-white rotate-[360deg]' : 'bg-white text-slate-400 group-hover:bg-blue-600 group-hover:text-white group-hover:rotate-6'}` }, letter),
+                          React.createElement('span', { className: `text-xl font-bold ${isUserCorrect ? 'text-green-900' : 'text-slate-700'}` }, option.includes(')') ? option.split(')')[1].trim() : option)
+                        );
+                      })
+                    ),
+                    React.createElement('div', { className: "mt-16 flex flex-col md:flex-row items-center justify-between gap-10 border-t border-slate-100 pt-10" },
+                      React.createElement('div', { className: "flex flex-col items-center md:items-start" },
+                        React.createElement('span', { className: "text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3" }, "Simulation Status"),
+                        React.createElement('div', { className: "flex space-x-1.5" }, activeQuiz.questions.map((_, i) => React.createElement('div', { key: i, className: `h-2 w-5 rounded-full transition-all duration-500 ${i < currentIndex ? 'bg-blue-600' : i === currentIndex ? 'bg-blue-300 animate-pulse w-8' : 'bg-slate-100'}` })))
+                      ),
+                      React.createElement('div', { className: "flex items-center space-x-10" },
+                        React.createElement('div', { className: "text-right" }, React.createElement('span', { className: "block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1" }, "Seconds"), React.createElement('span', { className: `text-4xl font-black tabular-nums ${timeLeft < 10 ? 'text-red-500 animate-pulse' : 'text-slate-900'}` }, timeLeft)),
+                        React.createElement('div', { className: "h-12 w-px bg-slate-200" }),
+                        React.createElement('div', { className: "text-right" }, React.createElement('span', { className: "block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1" }, "Score"), React.createElement('span', { className: "text-4xl font-black text-blue-600" }, score))
+                      )
+                    )
+                  )
+                )
+              ),
+              view === 'result' && activeQuiz && React.createElement('div', { className: "max-w-4xl mx-auto animate-in zoom-in duration-700" },
+                React.createElement('div', { className: "bg-white rounded-[4rem] shadow-2xl overflow-hidden border-4 border-white" },
+                  React.createElement('div', { className: "bg-gradient-to-br from-blue-900 to-indigo-950 p-24 text-center text-white relative" },
+                    React.createElement(Trophy, { className: "w-32 h-32 mx-auto mb-10 text-yellow-400 animate-bounce" }),
+                    React.createElement('h2', { className: "text-6xl font-black mb-4 tracking-tighter uppercase" }, "Legendary Finish!"),
+                    React.createElement('p', { className: "text-blue-200 font-bold text-xl uppercase tracking-widest opacity-80" }, activeQuiz.title),
+                    React.createElement('div', { className: "mt-12 inline-flex items-center space-x-6 bg-white/10 px-10 py-5 rounded-[2.5rem] backdrop-blur-xl border border-white/20" }, React.createElement(Zap, { className: "w-8 h-8 text-yellow-300 fill-current" }), React.createElement('span', { className: "text-3xl font-black" }, `+${score * 25} ACADEMY XP`))
+                  ),
+                  React.createElement('div', { className: "p-16 text-center bg-slate-50/30" },
+                    React.createElement('div', { className: "grid grid-cols-2 md:grid-cols-4 gap-8 mb-16" },
+                      [{ l: 'CORRECT', v: `${score}/${activeQuiz.questions?.length}`, c: 'text-slate-900' }, { l: 'ACCURACY', v: `${Math.round((score / (activeQuiz.questions?.length || 1)) * 100)}%`, c: 'text-blue-600' }, { l: 'PEAK STREAK', v: maxStreak, c: 'text-orange-500' }, { l: 'ACADEMY LVL', v: currentLevel, c: 'text-purple-600' }].map((stat, i) =>
+                        React.createElement('div', { key: i, className: "bg-white p-8 rounded-[2.5rem] border-2 border-white flex flex-col items-center shadow-lg shadow-blue-50/50" }, React.createElement('span', { className: "text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4" }, stat.l), React.createElement('p', { className: `text-4xl font-black tracking-tighter ${stat.c}` }, stat.v))
+                      )
+                    ),
+                    React.createElement('div', { className: "flex flex-col md:flex-row items-center justify-center gap-6" },
+                      React.createElement('button', { onClick: () => handleStartQuiz(activeQuiz), className: "w-full md:w-auto px-16 py-6 bg-blue-600 text-white rounded-[2rem] font-black text-2xl hover:bg-blue-700 hover:scale-105 transition-all shadow-2xl" }, "TRY AGAIN"),
+                      React.createElement('button', { onClick: () => setView('home'), className: "w-full md:w-auto px-16 py-6 bg-white text-slate-600 rounded-[2rem] font-black text-2xl border-2 border-slate-200" }, "DASHBOARD")
+                    )
+                  )
+                )
+              )
+            ),
+            React.createElement('footer', { className: "py-24 text-center" },
+              React.createElement('div', { className: "flex justify-center items-center space-x-4 mb-6 group cursor-pointer", onClick: () => setView('home') },
+                React.createElement('div', { className: "w-14 h-14 bg-slate-950 rounded-2xl flex items-center justify-center text-white font-black text-2xl group-hover:bg-blue-600 transition-all shadow-xl" }, "B"),
+                React.createElement('span', { className: "text-4xl font-black text-slate-900 tracking-tighter uppercase group-hover:text-blue-600 transition-colors" }, "Boss")
+              ),
+              React.createElement('p', { className: "text-slate-400 font-bold uppercase tracking-[0.5em] text-[12px] mb-12" }, "Clinical Prosthodontics Mastery Platform"),
+              React.createElement('div', { className: "flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-12 text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] border-t-2 border-slate-100 pt-16 max-w-2xl mx-auto" },
+                React.createElement('span', null, "© ACADEMY 2025"),
+                React.createElement('span', { className: "hidden md:inline w-2 h-2 bg-slate-200 rounded-full" }),
+                React.createElement('span', null, "OFFLINE READY ENGINE"),
+                React.createElement('span', { className: "hidden md:inline w-2 h-2 bg-slate-200 rounded-full" }),
+                React.createElement('span', null, "DESIGNED BY THE BOSS")
+              )
+            )
+          );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App));
+    </script>
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>
