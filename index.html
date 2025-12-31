@@ -44,7 +44,8 @@
           100% { background-position: 0% 50%; }
         }
 
-        .shadow-xl { transition: shadow 0.3s ease-in-out; }
+        .shadow-boss { box-shadow: 0 20px 50px -12px rgba(37, 99, 235, 0.2); }
+        .transition-boss { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
     <script type="importmap">
 {
@@ -68,7 +69,7 @@
         import ReactDOM from 'react-dom/client';
         import { 
           ChevronRight, Trophy, ArrowLeft, Stethoscope, Sparkles, Award, 
-          BookOpen, Zap, Flame, Shield, Clock, Skull, Star, Brain, Ghost, Volume2 
+          BookOpen, Zap, Flame, Shield, Clock, Skull, Star, Brain, Ghost, Volume2, RefreshCw
         } from 'lucide-react';
 
         // --- DATA SECTION ---
@@ -308,14 +309,11 @@
           const [view, setView] = useState('home');
           const [activeQuiz, setActiveQuiz] = useState(null);
           const [currentIndex, setCurrentIndex] = useState(0);
+          const [resumeModal, setResumeModal] = useState(null); // { quiz, state }
           
           const [score, setScore] = useState(0);
           const [xp, setXp] = useState(() => {
-            try {
-              return Number(localStorage.getItem('dental_xp')) || 0;
-            } catch {
-              return 0;
-            }
+            try { return Number(localStorage.getItem('dental_xp')) || 0; } catch { return 0; }
           });
           const [streak, setStreak] = useState(0);
           const [maxStreak, setMaxStreak] = useState(0);
@@ -334,37 +332,40 @@
           
           const welcomeText = "جميع الاسئله تم انشائها بواسطه الذكاء الاصطناعي... ماتنسوش تدعوا ل ";
 
+          // Initialize Typewriter
           useEffect(() => {
             let i = 0;
             const interval = setInterval(() => {
               setTypedMessage(welcomeText.slice(0, i));
               i++;
-              if (i > welcomeText.length) {
-                clearInterval(interval);
-                setShowBoss(true);
-              }
-            }, 50);
+              if (i > welcomeText.length) { clearInterval(interval); setShowBoss(true); }
+            }, 40);
             return () => clearInterval(interval);
           }, []);
 
+          // Sync XP
           useEffect(() => {
             try { localStorage.setItem('dental_xp', xp.toString()); } catch (e) {}
           }, [xp]);
 
+          // Sync Quiz Progress for Resume
+          useEffect(() => {
+            if (view === 'quiz' && activeQuiz && feedback === null) {
+              const sessionState = { quizId: activeQuiz.id, currentIndex, score, streak, maxStreak, powerUps };
+              localStorage.setItem(`session_${activeQuiz.id}`, JSON.stringify(sessionState));
+            }
+          }, [currentIndex, score, streak, activeQuiz, view, feedback]);
+
+          // Timer logic
           useEffect(() => {
             if (view === 'quiz' && !isFrozen && feedback === null) {
               timerRef.current = window.setInterval(() => {
                 setTimeLeft((prev) => {
-                  if (prev <= 1) {
-                    handleTimeOut();
-                    return 30;
-                  }
+                  if (prev <= 1) { handleTimeOut(); return 30; }
                   return prev - 1;
                 });
               }, 1000);
-            } else {
-              if (timerRef.current) clearInterval(timerRef.current);
-            }
+            } else { if (timerRef.current) clearInterval(timerRef.current); }
             return () => { if (timerRef.current) clearInterval(timerRef.current); };
           }, [view, currentIndex, isFrozen, feedback]);
 
@@ -372,32 +373,40 @@
             setFeedback('wrong');
             setStreak(0);
             setMessageToast("Time's up! ⏳");
-            setTimeout(() => {
-              setMessageToast(null);
-              setFeedback(null);
-              nextQuestion();
-            }, 1500);
+            setTimeout(() => { setMessageToast(null); setFeedback(null); nextQuestion(); }, 1500);
           };
 
           const handleStartQuiz = (quiz) => {
-            if (quiz.isExternal) {
-              window.open(quiz.link, '_blank');
-              return;
+            if (quiz.isExternal) { window.open(quiz.link, '_blank'); return; }
+            
+            // Check for saved session
+            const saved = localStorage.getItem(`session_${quiz.id}`);
+            if (saved) {
+              setResumeModal({ quiz, state: JSON.parse(saved) });
+            } else {
+              initiateQuiz(quiz, 0, 0, 0, 0, { hints: 3, freezes: 2 });
             }
+          };
+
+          const initiateQuiz = (quiz, idx, sc, str, mstr, pUps) => {
             setActiveQuiz(quiz);
-            setCurrentIndex(0);
-            setScore(0);
-            setStreak(0);
+            setCurrentIndex(idx);
+            setScore(sc);
+            setStreak(str);
+            setMaxStreak(mstr);
+            setPowerUps(pUps);
             setTimeLeft(30);
             setFeedback(null);
             setEliminatedIndices([]);
+            setResumeModal(null);
             setView('quiz');
           };
+
+          const clearSession = (id) => { localStorage.removeItem(`session_${id}`); };
 
           const handleSelectAnswer = (optionLetter) => {
             if (feedback) return;
             const correct = activeQuiz?.questions?.[currentIndex].answer === optionLetter;
-
             if (correct) {
               setFeedback('correct');
               setScore((s) => s + 1);
@@ -409,24 +418,13 @@
               setXp((prev) => prev + gain);
               if (newStreak >= 3) setMessageToast(`🔥 Streak ${newStreak}! UNSTOPPABLE!`);
               else setMessageToast("Bravo! Keep going! 💪");
-
-              confetti({
-                particleCount: 150,
-                spread: 80,
-                origin: { y: 0.7 },
-                colors: ['#22c55e', '#3b82f6', '#ffffff']
-              });
+              confetti({ particleCount: 150, spread: 80, origin: { y: 0.7 }, colors: ['#22c55e', '#3b82f6', '#ffffff'] });
             } else {
               setFeedback('wrong');
               setStreak(0);
               setMessageToast("Wrong choice, but don't give up! 😉");
             }
-            setTimeout(() => {
-              setFeedback(null);
-              setXpGain(null);
-              setMessageToast(null);
-              nextQuestion();
-            }, 1500);
+            setTimeout(() => { setFeedback(null); setXpGain(null); setMessageToast(null); nextQuestion(); }, 1500);
           };
 
           const nextQuestion = () => {
@@ -436,7 +434,10 @@
               setTimeLeft(30);
               setIsFrozen(false);
               setEliminatedIndices([]);
-            } else { setView('result'); }
+            } else { 
+              clearSession(activeQuiz.id);
+              setView('result'); 
+            }
           };
 
           const use5050 = () => {
@@ -459,10 +460,29 @@
           const progressToNextLevel = ((xp % 1000) / 1000) * 100;
 
           return React.createElement('div', { className: "min-h-screen flex flex-col bg-[#F8FAFC] transition-colors duration-500 overflow-x-hidden" },
+            // Modal for Resume
+            resumeModal && React.createElement('div', { className: "fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in" },
+              React.createElement('div', { className: "bg-white rounded-[2.5rem] p-10 max-w-lg w-full shadow-2xl border-4 border-blue-100 text-center animate-in zoom-in slide-in-from-bottom-12" },
+                React.createElement(RefreshCw, { className: "w-16 h-16 mx-auto mb-6 text-blue-600 animate-spin-slow" }),
+                React.createElement('h3', { className: "text-3xl font-black mb-4 tracking-tighter" }, "RESUME DRILL?"),
+                React.createElement('p', { className: "text-slate-500 mb-10 font-medium" }, `You have an unfinished simulation for "${resumeModal.quiz.title}" at question ${resumeModal.state.currentIndex + 1}.`),
+                React.createElement('div', { className: "flex flex-col gap-4" },
+                  React.createElement('button', { 
+                    onClick: () => initiateQuiz(resumeModal.quiz, resumeModal.state.currentIndex, resumeModal.state.score, resumeModal.state.streak, resumeModal.state.maxStreak, resumeModal.state.powerUps),
+                    className: "w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all shadow-xl"
+                  }, "RESUME PROGRESS"),
+                  React.createElement('button', { 
+                    onClick: () => { clearSession(resumeModal.quiz.id); initiateQuiz(resumeModal.quiz, 0, 0, 0, 0, { hints: 3, freezes: 2 }); },
+                    className: "w-full py-5 bg-slate-100 text-slate-600 rounded-2xl font-black text-xl hover:bg-slate-200 transition-all"
+                  }, "START NEW DRILL")
+                )
+              )
+            ),
+            
             React.createElement('header', { className: "bg-white/95 backdrop-blur-md border-b-2 border-blue-100 sticky top-0 z-50 shadow-md h-20" },
               React.createElement('div', { className: "max-w-7xl mx-auto px-4 h-full flex items-center justify-between" },
                 React.createElement('div', { className: "flex items-center space-x-4 cursor-pointer group", onClick: () => setView('home') },
-                  React.createElement('div', { className: "w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200 group-hover:rotate-12 transition-all" }, React.createElement(Stethoscope, { className: "w-7 h-7" })),
+                  React.createElement('div', { className: "w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200 group-hover:rotate-12 transition-boss" }, React.createElement(Stethoscope, { className: "w-7 h-7" })),
                   React.createElement('div', null,
                     React.createElement('h1', { className: "text-xl font-black text-slate-900 tracking-tighter uppercase leading-none" }, "PROSTH ", React.createElement('span', { className: "text-blue-600" }, "MASTERY")),
                     React.createElement('p', { className: "text-[10px] text-blue-500 font-bold uppercase tracking-widest mt-1" }, `Academy Rank: ${currentLevel}`)
@@ -472,7 +492,7 @@
                   React.createElement('div', { className: "hidden lg:flex flex-col items-end" },
                     React.createElement('div', { className: "flex items-center space-x-2 mb-1" }, React.createElement(Zap, { className: "w-4 h-4 text-blue-500" }), React.createElement('span', { className: "text-[10px] font-black text-slate-400" }, "XP PROGRESS")),
                     React.createElement('div', { className: "w-40 h-3 bg-slate-100 rounded-full border border-blue-50 overflow-hidden shadow-inner" },
-                      React.createElement('div', { className: "h-full bg-blue-600 transition-all duration-1000", style: { width: `${progressToNextLevel}%` } })
+                      React.createElement('div', { className: "h-full bg-blue-600 transition-boss", style: { width: `${progressToNextLevel}%` } })
                     )
                   ),
                   React.createElement('div', { className: "flex items-center space-x-3 bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100" },
@@ -484,14 +504,13 @@
             ),
             React.createElement('main', { className: "flex-grow max-w-7xl mx-auto w-full px-4 py-8 md:py-12" },
               view === 'home' && React.createElement('div', { className: "space-y-12 animate-in fade-in zoom-in duration-700" },
-                React.createElement('div', { className: "relative overflow-hidden bg-white rounded-[3rem] p-8 md:p-16 border-4 border-white shadow-xl" },
+                React.createElement('div', { className: "relative overflow-hidden bg-white rounded-[3rem] p-8 md:p-16 border-4 border-white shadow-boss transition-boss" },
                   React.createElement('div', { className: "absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-blue-50/50 to-transparent -skew-x-12 pointer-events-none" }),
                   React.createElement('div', { className: "relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center" },
                     React.createElement('div', { className: "space-y-8" },
-                      React.createElement('div', { className: "inline-flex items-center space-x-3 px-5 py-2.5 bg-blue-950 text-white rounded-full text-xs font-black uppercase tracking-[0.2em] shadow-xl" }, React.createElement(Volume2, { className: "w-4 h-4 animate-pulse" }), React.createElement('span', null, "Academic Simulation Engine")),
-                      React.createElement('h2', { className: "text-6xl md:text-7xl font-black text-slate-900 tracking-tighter leading-[0.85]" }, "Master the ", React.createElement('br'), React.createElement('span', { className: "text-blue-600 italic" }, "Preparation.")),
-                      React.createElement('p', { className: "text-slate-500 text-lg md:text-xl font-medium leading-relaxed max-w-md" }, "Advanced clinical drills in Fixed Prosthodontics. Train your eyes, test your knowledge, and earn your Boss status."),
-                      React.createElement('div', { className: "pt-6" },
+                      React.createElement('div', { className: "inline-flex items-center space-x-3 px-5 py-2.5 bg-blue-950 text-white rounded-full text-xs font-black uppercase tracking-[0.2em] shadow-xl" }, React.createElement(Volume2, { className: "w-4 h-4 animate-pulse" }), React.createElement('span', null, "Academy Data Loaded")),
+                      React.createElement('h2', { className: "text-6xl md:text-7xl font-black text-slate-900 tracking-tighter leading-[0.85]" }, "Master the ", React.createElement('br'), React.createElement('span', { className: "text-blue-600 italic" }, "Restoration.")),
+                      React.createElement('div', { className: "pt-4" },
                         React.createElement('div', { className: "flex items-start space-x-5" },
                           React.createElement('div', { className: "w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0" }, React.createElement(Ghost, { className: "w-7 h-7 animate-bounce" })),
                           React.createElement('div', { className: "bg-[#F1F5F9] border-2 border-white p-6 rounded-3xl rounded-tl-none shadow-xl max-w-md" },
@@ -504,9 +523,9 @@
                       )
                     ),
                     React.createElement('div', { className: "grid grid-cols-2 gap-6" },
-                      [{ label: 'YOUR XP', val: xp, icon: Zap, color: 'text-blue-500' }, { label: 'RANK', val: currentLevel, icon: Star, color: 'text-yellow-500' }, { label: 'STREAK', val: maxStreak, icon: Flame, color: 'text-orange-500' }, { label: 'MODULES', val: '8/8', icon: Award, color: 'text-purple-500' }].map((stat, i) =>
-                        React.createElement('div', { key: i, className: "bg-slate-50 p-8 rounded-[2.5rem] border-2 border-white shadow-inner flex flex-col items-center group hover:bg-white hover:shadow-2xl hover:scale-105 transition-all duration-500" },
-                          React.createElement('div', { className: "p-3 bg-white rounded-2xl shadow-sm mb-4 transition-transform group-hover:rotate-12" }, React.createElement(stat.icon, { className: `w-8 h-8 ${stat.color}` })),
+                      [{ label: 'TOTAL ACADEMY XP', val: xp, icon: Zap, color: 'text-blue-500' }, { label: 'PEAK RANK', val: currentLevel, icon: Star, color: 'text-yellow-500' }, { label: 'BEST STREAK', val: maxStreak, icon: Flame, color: 'text-orange-500' }, { label: 'MODULES', val: '8/8', icon: Award, color: 'text-purple-500' }].map((stat, i) =>
+                        React.createElement('div', { key: i, className: "bg-slate-50 p-8 rounded-[2.5rem] border-2 border-white shadow-inner flex flex-col items-center group hover:bg-white hover:shadow-2xl hover:scale-105 transition-boss" },
+                          React.createElement('div', { className: "p-3 bg-white rounded-2xl shadow-sm mb-4 transition-boss group-hover:rotate-12" }, React.createElement(stat.icon, { className: `w-8 h-8 ${stat.color}` })),
                           React.createElement('span', { className: "text-3xl font-black text-slate-800 tracking-tight" }, stat.val),
                           React.createElement('span', { className: "text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2" }, stat.label)
                         )
@@ -516,13 +535,13 @@
                 ),
                 React.createElement('div', { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" },
                   QUIZZES.map((quiz) =>
-                    React.createElement('div', { key: quiz.id, className: "group bg-white rounded-[2.5rem] p-10 border-2 border-transparent hover:border-blue-400 hover:shadow-2xl transition-all duration-500 cursor-pointer flex flex-col relative overflow-hidden transform hover:-translate-y-4", onClick: () => handleStartQuiz(quiz) },
-                      React.createElement('div', { className: "w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center text-4xl mb-8 group-hover:bg-blue-600 group-hover:text-white transition-all group-hover:rotate-6" }, quiz.icon),
+                    React.createElement('div', { key: quiz.id, className: "group bg-white rounded-[2.5rem] p-10 border-2 border-transparent hover:border-blue-400 hover:shadow-2xl transition-boss cursor-pointer flex flex-col relative overflow-hidden transform hover:-translate-y-4", onClick: () => handleStartQuiz(quiz) },
+                      React.createElement('div', { className: "w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center text-4xl mb-8 group-hover:bg-blue-600 group-hover:text-white transition-boss group-hover:rotate-6" }, quiz.icon),
                       React.createElement('h3', { className: "text-2xl font-black text-slate-800 mb-3 group-hover:text-blue-600 transition-colors leading-tight" }, quiz.title),
                       React.createElement('p', { className: "text-sm text-slate-400 flex-grow font-semibold leading-relaxed mb-10" }, quiz.description),
                       React.createElement('div', { className: "flex items-center justify-between border-t border-slate-50 pt-6" },
                         React.createElement('span', { className: "text-[10px] font-black text-blue-600 tracking-[0.2em] uppercase" }, quiz.isExternal ? 'OPEN PORTAL' : 'BEGIN DRILL'),
-                        React.createElement('div', { className: "w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all" }, React.createElement(ChevronRight, { className: "w-6 h-6" }))
+                        React.createElement('div', { className: "w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-boss" }, React.createElement(ChevronRight, { className: "w-6 h-6" }))
                       )
                     )
                   )
@@ -530,13 +549,13 @@
               ),
               view === 'quiz' && activeQuiz?.questions && React.createElement('div', { className: "max-w-4xl mx-auto animate-in slide-in-from-bottom duration-500" },
                 React.createElement('div', { className: "mb-8 flex flex-col md:flex-row items-center justify-between gap-6" },
-                  React.createElement('button', { onClick: () => setView('home'), className: "px-8 py-4 bg-white text-slate-900 rounded-2xl font-black hover:bg-slate-50 border-2 border-slate-100 shadow-sm transition-all flex items-center group" }, React.createElement(ArrowLeft, { className: "w-5 h-5 mr-3 group-hover:-translate-x-1" }), "TERMINATE"),
+                  React.createElement('button', { onClick: () => setView('home'), className: "px-8 py-4 bg-white text-slate-900 rounded-2xl font-black hover:bg-slate-50 border-2 border-slate-100 shadow-sm transition-boss flex items-center group" }, React.createElement(ArrowLeft, { className: "w-5 h-5 mr-3 group-hover:-translate-x-1" }), "TERMINATE"),
                   React.createElement('div', { className: "flex items-center space-x-4" },
-                    React.createElement('button', { onClick: use5050, disabled: powerUps.hints === 0 || feedback !== null || eliminatedIndices.length > 0, className: "flex items-center space-x-3 px-6 py-4 rounded-2xl font-black text-sm border-2 transition-all shadow-sm bg-blue-50 border-blue-200 text-blue-700 hover:scale-105" }, React.createElement(Brain, { className: "w-5 h-5" }), React.createElement('span', null, `50/50 (${powerUps.hints})`)),
-                    React.createElement('button', { onClick: useFreeze, disabled: powerUps.freezes === 0 || feedback !== null || isFrozen, className: "flex items-center space-x-3 px-6 py-4 rounded-2xl font-black text-sm border-2 transition-all shadow-sm bg-cyan-50 border-cyan-200 text-cyan-700 hover:scale-105" }, React.createElement(Clock, { className: "w-5 h-5" }), React.createElement('span', null, `FREEZE (${powerUps.freezes})`))
+                    React.createElement('button', { onClick: use5050, disabled: powerUps.hints === 0 || feedback !== null || eliminatedIndices.length > 0, className: "flex items-center space-x-3 px-6 py-4 rounded-2xl font-black text-sm border-2 transition-boss shadow-sm bg-blue-50 border-blue-200 text-blue-700 hover:scale-105" }, React.createElement(Brain, { className: "w-5 h-5" }), React.createElement('span', null, `50/50 (${powerUps.hints})`)),
+                    React.createElement('button', { onClick: useFreeze, disabled: powerUps.freezes === 0 || feedback !== null || isFrozen, className: "flex items-center space-x-3 px-6 py-4 rounded-2xl font-black text-sm border-2 transition-boss shadow-sm bg-cyan-50 border-cyan-200 text-cyan-700 hover:scale-105" }, React.createElement(Clock, { className: "w-5 h-5" }), React.createElement('span', null, `FREEZE (${powerUps.freezes})`))
                   )
                 ),
-                React.createElement('div', { className: `relative bg-white rounded-[3.5rem] shadow-2xl border-4 transition-all duration-300 ${feedback === 'correct' ? 'border-green-400 correct-glow' : feedback === 'wrong' ? 'border-red-400 shake' : 'border-white'}` },
+                React.createElement('div', { className: `relative bg-white rounded-[3.5rem] shadow-boss border-4 transition-boss ${feedback === 'correct' ? 'border-green-400 correct-glow' : feedback === 'wrong' ? 'border-red-400 shake' : 'border-white'}` },
                   messageToast && React.createElement('div', { className: "absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-900 text-white px-10 py-4 rounded-3xl font-black text-lg shadow-2xl z-30 animate-in slide-in-from-top-12" }, messageToast),
                   React.createElement('div', { className: "h-3 w-full bg-slate-100 relative" },
                     React.createElement('div', { className: `h-full transition-all duration-1000 ease-linear ${timeLeft < 10 ? 'fire-timer' : 'bg-blue-600'}`, style: { width: `${(timeLeft / 30) * 100}%` } }),
@@ -547,7 +566,7 @@
                     React.createElement('div', { className: "flex items-center space-x-4 mb-10" },
                       React.createElement('div', { className: `w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg ${currentIndex >= activeQuiz.questions.length - 5 ? 'bg-red-600 text-white animate-pulse' : 'bg-blue-600 text-white'}` }, currentIndex >= activeQuiz.questions.length - 5 ? React.createElement(Skull, { className: "w-6 h-6" }) : React.createElement(Zap, { className: "w-6 h-6" })),
                       React.createElement('div', { className: "flex flex-col" },
-                        React.createElement('span', { className: `text-[10px] font-black tracking-[0.2em] uppercase ${currentIndex >= activeQuiz.questions.length - 5 ? 'text-red-600' : 'text-blue-600'}` }, currentIndex >= activeQuiz.questions.length - 5 ? 'BOSS BATTLE: THE FINAL 5' : 'Clinical Simulation Phase'),
+                        React.createElement('span', { className: `text-[10px] font-black tracking-[0.2em] uppercase ${currentIndex >= activeQuiz.questions.length - 5 ? 'text-red-600' : 'text-blue-600'}` }, currentIndex >= activeQuiz.questions.length - 5 ? 'BOSS BATTLE: THE FINAL 5' : 'Simulation Engine Phase'),
                         React.createElement('span', { className: "text-slate-400 text-[10px] font-bold" }, `Module: ${activeQuiz.title}`)
                       )
                     ),
@@ -558,7 +577,7 @@
                         const isEliminated = eliminatedIndices.includes(idx);
                         const isUserCorrect = feedback === 'correct' && activeQuiz.questions[currentIndex].answer === letter;
                         const isShownCorrect = feedback === 'wrong' && activeQuiz.questions[currentIndex].answer === letter;
-                        return React.createElement('button', { key: idx, disabled: feedback !== null || isEliminated, onClick: () => handleSelectAnswer(letter), className: `w-full text-left p-8 rounded-3xl border-4 transition-all duration-300 flex items-center group relative overflow-hidden ${isEliminated ? 'opacity-20 pointer-events-none scale-95' : isUserCorrect ? 'border-green-500 bg-green-50 scale-[1.02]' : isShownCorrect ? 'border-green-500 bg-green-50/50 border-dashed' : 'border-slate-50 bg-slate-50 hover:border-blue-600 active:scale-[0.98]'}` },
+                        return React.createElement('button', { key: idx, disabled: feedback !== null || isEliminated, onClick: () => handleSelectAnswer(letter), className: `w-full text-left p-8 rounded-3xl border-4 transition-boss flex items-center group relative overflow-hidden ${isEliminated ? 'opacity-10 pointer-events-none' : isUserCorrect ? 'border-green-500 bg-green-50 scale-[1.02]' : isShownCorrect ? 'border-green-500 bg-green-50/50 border-dashed' : 'border-slate-50 bg-slate-50 hover:border-blue-600 active:scale-[0.98]'}` },
                           React.createElement('div', { className: `w-14 h-14 rounded-2xl flex items-center justify-center mr-8 font-black text-2xl shadow-sm ${isUserCorrect ? 'bg-green-500 text-white rotate-[360deg]' : 'bg-white text-slate-400 group-hover:bg-blue-600 group-hover:text-white group-hover:rotate-6'}` }, letter),
                           React.createElement('span', { className: `text-xl font-bold ${isUserCorrect ? 'text-green-900' : 'text-slate-700'}` }, option.includes(')') ? option.split(')')[1].trim() : option)
                         );
@@ -566,8 +585,8 @@
                     ),
                     React.createElement('div', { className: "mt-16 flex flex-col md:flex-row items-center justify-between gap-10 border-t border-slate-100 pt-10" },
                       React.createElement('div', { className: "flex flex-col items-center md:items-start" },
-                        React.createElement('span', { className: "text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3" }, "Simulation Status"),
-                        React.createElement('div', { className: "flex space-x-1.5" }, activeQuiz.questions.map((_, i) => React.createElement('div', { key: i, className: `h-2 w-5 rounded-full transition-all duration-500 ${i < currentIndex ? 'bg-blue-600' : i === currentIndex ? 'bg-blue-300 animate-pulse w-8' : 'bg-slate-100'}` })))
+                        React.createElement('span', { className: "text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3" }, "Drill State"),
+                        React.createElement('div', { className: "flex space-x-1.5" }, activeQuiz.questions.map((_, i) => React.createElement('div', { key: i, className: `h-2 w-5 rounded-full transition-boss ${i < currentIndex ? 'bg-blue-600' : i === currentIndex ? 'bg-blue-300 animate-pulse w-8' : 'bg-slate-100'}` })))
                       ),
                       React.createElement('div', { className: "flex items-center space-x-10" },
                         React.createElement('div', { className: "text-right" }, React.createElement('span', { className: "block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1" }, "Seconds"), React.createElement('span', { className: `text-4xl font-black tabular-nums ${timeLeft < 10 ? 'text-red-500 animate-pulse' : 'text-slate-900'}` }, timeLeft)),
@@ -582,7 +601,7 @@
                 React.createElement('div', { className: "bg-white rounded-[4rem] shadow-2xl overflow-hidden border-4 border-white" },
                   React.createElement('div', { className: "bg-gradient-to-br from-blue-900 to-indigo-950 p-24 text-center text-white relative" },
                     React.createElement(Trophy, { className: "w-32 h-32 mx-auto mb-10 text-yellow-400 animate-bounce" }),
-                    React.createElement('h2', { className: "text-6xl font-black mb-4 tracking-tighter uppercase" }, "Legendary Finish!"),
+                    React.createElement('h2', { className: "text-6xl font-black mb-4 tracking-tighter uppercase" }, "Academy Legend!"),
                     React.createElement('p', { className: "text-blue-200 font-bold text-xl uppercase tracking-widest opacity-80" }, activeQuiz.title),
                     React.createElement('div', { className: "mt-12 inline-flex items-center space-x-6 bg-white/10 px-10 py-5 rounded-[2.5rem] backdrop-blur-xl border border-white/20" }, React.createElement(Zap, { className: "w-8 h-8 text-yellow-300 fill-current" }), React.createElement('span', { className: "text-3xl font-black" }, `+${score * 25} ACADEMY XP`))
                   ),
@@ -593,7 +612,7 @@
                       )
                     ),
                     React.createElement('div', { className: "flex flex-col md:flex-row items-center justify-center gap-6" },
-                      React.createElement('button', { onClick: () => handleStartQuiz(activeQuiz), className: "w-full md:w-auto px-16 py-6 bg-blue-600 text-white rounded-[2rem] font-black text-2xl hover:bg-blue-700 hover:scale-105 transition-all shadow-2xl" }, "TRY AGAIN"),
+                      React.createElement('button', { onClick: () => { clearSession(activeQuiz.id); initiateQuiz(activeQuiz, 0, 0, 0, 0, { hints: 3, freezes: 2 }); }, className: "w-full md:w-auto px-16 py-6 bg-blue-600 text-white rounded-[2rem] font-black text-2xl hover:bg-blue-700 hover:scale-105 transition-all shadow-2xl" }, "RE-SIMULATE"),
                       React.createElement('button', { onClick: () => setView('home'), className: "w-full md:w-auto px-16 py-6 bg-white text-slate-600 rounded-[2rem] font-black text-2xl border-2 border-slate-200" }, "DASHBOARD")
                     )
                   )
@@ -602,14 +621,14 @@
             ),
             React.createElement('footer', { className: "py-24 text-center" },
               React.createElement('div', { className: "flex justify-center items-center space-x-4 mb-6 group cursor-pointer", onClick: () => setView('home') },
-                React.createElement('div', { className: "w-14 h-14 bg-slate-950 rounded-2xl flex items-center justify-center text-white font-black text-2xl group-hover:bg-blue-600 transition-all shadow-xl" }, "B"),
+                React.createElement('div', { className: "w-14 h-14 bg-slate-950 rounded-2xl flex items-center justify-center text-white font-black text-2xl group-hover:bg-blue-600 transition-boss shadow-xl" }, "B"),
                 React.createElement('span', { className: "text-4xl font-black text-slate-900 tracking-tighter uppercase group-hover:text-blue-600 transition-colors" }, "Boss")
               ),
-              React.createElement('p', { className: "text-slate-400 font-bold uppercase tracking-[0.5em] text-[12px] mb-12" }, "Clinical Prosthodontics Mastery Platform"),
+              React.createElement('p', { className: "text-slate-400 font-bold uppercase tracking-[0.5em] text-[12px] mb-12" }, "Fixed Prosthodontics Mastery Platform"),
               React.createElement('div', { className: "flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-12 text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] border-t-2 border-slate-100 pt-16 max-w-2xl mx-auto" },
                 React.createElement('span', null, "© ACADEMY 2025"),
                 React.createElement('span', { className: "hidden md:inline w-2 h-2 bg-slate-200 rounded-full" }),
-                React.createElement('span', null, "OFFLINE READY ENGINE"),
+                React.createElement('span', null, "OFFLINE DATA ENGINE"),
                 React.createElement('span', { className: "hidden md:inline w-2 h-2 bg-slate-200 rounded-full" }),
                 React.createElement('span', null, "DESIGNED BY THE BOSS")
               )
